@@ -1,6 +1,6 @@
 # COCAL_IDX reduced-fixture reader regression test.
 
-Cactus::cctk_run_title = "COCAL_IDX BNS irrotational fixture"
+Cactus::cctk_run_title = "COCAL_IDX RNS CF TEOS fixture"
 Cactus::cctk_full_warnings = "yes"
 Cactus::highlight_warning_messages = "no"
 Cactus::terminate = "iteration"
@@ -21,12 +21,12 @@ CarpetX::verbose = no
 CarpetX::poison_undefined_values = yes
 CarpetX::poison_undefined_arrays = no
 
-CarpetX::xmin = -17.053447918351154
-CarpetX::xmax =  17.053447918351154
-CarpetX::ymin =  -3.424387249508342
-CarpetX::ymax =   3.424387249508342
-CarpetX::zmin =  -3.424387249508342
-CarpetX::zmax =   3.424387249508342
+CarpetX::xmin = -1.0
+CarpetX::xmax =  1.0
+CarpetX::ymin = -1.0
+CarpetX::ymax =  1.0
+CarpetX::zmin = -1.0
+CarpetX::zmax =  1.0
 
 CarpetX::ncells_x = 4
 CarpetX::ncells_y = 4
@@ -53,14 +53,16 @@ CarpetX::max_num_levels = 1
 CarpetX::regrid_every = 1280000
 CarpetX::dtfac = 0.5
 
-COCAL_IDX::coc2cac_dir_path_ID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/bns_ir"
+COCAL_IDX::coc2cac_dir_path_ID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/rns_cf_teos"
+COCAL_IDX::coc2cac_rnstype = "RNS_CF"
 COCAL_IDX::coc2cac_readpot = "False"
 COCAL_IDX::coc2cac_readformat = "20.12"
+COCAL_IDX::coc2cac_read_tabulated_eos = "True"
 COCAL_IDX::verbose = "False"
 
-ADMBaseX::initial_data = "CocalBNS"
+ADMBaseX::initial_data = "CocalRNS"
 ADMBaseX::initial_lapse = "Cocal"
-ADMBaseX::initial_shift = "zero"
+ADMBaseX::initial_shift = "Cocal"
 ADMBaseX::initial_dtlapse = "zero"
 ADMBaseX::initial_dtshift = "zero"
 HydroBaseX::initial_hydro = "Cocal"
@@ -73,6 +75,7 @@ IO::parfile_write = "no"
 CarpetX::out_metadata = no
 CarpetX::out_norm_vars = "
   ADMBaseX::lapse
+  ADMBaseX::shift
   ADMBaseX::metric
   ADMBaseX::curv
   HydroBaseX::rho

@@ -1,0 +1,2 @@
+# 1:iteration	2:time	3:hydrobasex::press.min	4:hydrobasex::press.max	5:hydrobasex::press.sum	6:hydrobasex::press.avg	7:hydrobasex::press.stddev	8:hydrobasex::press.volume	9:hydrobasex::press.L1norm	10:hydrobasex::press.L2norm	11:hydrobasex::press.maxabs
+0	0.0000000000000000e+00	1.1682955444057486e-04	1.2657412492121664e-04	9.7320375399127346e-04	1.2165046924890918e-04	2.8751277096229672e-06	8.0000000000000000e+00	1.2165046924890918e-04	1.2168444036862905e-04	1.2657412492121664e-04

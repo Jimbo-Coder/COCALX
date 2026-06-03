@@ -67,7 +67,7 @@ HydroBaseX::initial_hydro = "Cocal"
 
 IO::out_dir = $parfile
 IO::out_every = 1
-IO::out_fileinfo = "none"
+IO::out_fileinfo = "axis labels"
 IO::parfile_write = "no"
 
 CarpetX::out_metadata = no
