@@ -69,6 +69,10 @@ CCTK_BOOLEAN coc2cac_set_asterx_avec "Whether to write AsterX staggered vector p
 {
 } "False"
 
+CCTK_BOOLEAN coc2cac_read_tabulated_eos "Read tabulated EOS data when converting COCAL enthalpy to hydro variables"
+{
+} "False"
+
 CCTK_REAL coc2cac_cen_x1 "X Position of BNS star 1 for grid centers and diagnostics"
 {
   *:* :: ""
