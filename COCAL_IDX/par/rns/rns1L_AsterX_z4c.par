@@ -4,7 +4,7 @@ $itlast = 4
 $final_time = 1000
 $xmin = -256 #-512.0
 $xmax = 256 #+512.0
-$ncells = 64
+$ncells = 16
 $nlevels = 5
 $error_threshold = 0.9
 $dtfac = 0.25
@@ -48,7 +48,7 @@ Cactus::cctk_final_time = $final_time
 
 CarpetX::verbose = no
 CarpetX::poison_undefined_values = yes
-CarpetX::poison_undefined_arrays = no
+#CarpetX::poison_undefined_arrays = no
 
 CarpetX::xmin = $xmin
 CarpetX::ymin = $xmin
@@ -165,7 +165,7 @@ AsterSeeds::dipole_x = [0.0]
 AsterX::debug_mode = "no"
 AsterX::flux_type = "HLLE"
 AsterX::use_uct = "yes"
-AsterX::vector_potential_gauge = "generalized Lorenz"
+AsterX::vector_potential_gauge = "generalized Lorentz"
 AsterX::lorenz_damp_fac = 1.5/($dtfac* ((2 * $xmax)/$ncells))
 AsterX::local_spatial_order = 4
 AsterX::update_tmunu = "yes"
@@ -209,6 +209,8 @@ IO::out_every = $out_every3d #
 CarpetX::out_norm_vars = "all"
 CarpetX::out_norm_omit_unstable = yes
 CarpetX::out_norm_every = $out_every
+CarpetX::out_tsv_combine_iterations = yes
+CarpetX::out_tsv = yes
 #CarpetX::out_silo_compression_options = "METHOD=GZIP"
 
 #CarpetX::out_silo_vars = "
@@ -241,7 +243,7 @@ CarpetX::out_openpmd_vars = "
     Z4c::MtC
 "
 
-CarpetX::out_tsv_every = $out_every3d
+CarpetX::out_tsv_every = $out_every
 CarpetX::out_tsv_vars = "
     AsterX::dB
      HydroBaseX::rho

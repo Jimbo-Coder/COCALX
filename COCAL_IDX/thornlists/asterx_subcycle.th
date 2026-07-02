@@ -275,7 +275,7 @@ SpacetimeX/Z4c
 !TYPE     = git
 !URL      = https://github.com/EinsteinToolkit/AsterX.git
 !REPO_PATH= $2
-!REPO_BRANCH = devSC
+!REPO_BRANCH = dev
 !CHECKOUT =
 AsterX/AsterSeeds
 AsterX/AsterUtils
@@ -307,7 +307,7 @@ AsterX/AsterAnalysis
 !CHECKOUT =
 COCALX/COCAL_IDX
 
-BNSTools/MHD_Diagnostics
+#BNSTools/MHD_Diagnostics
 BNSTools/VolumeIntegrals_GRMHDX
 BNSTools/VolumeIntegrals_vacuumX
 

@@ -63,7 +63,7 @@ Cactus::cctk_final_time = $final_time
 
 CarpetX::verbose = no
 CarpetX::poison_undefined_values = no
-CarpetX::poison_undefined_arrays = no
+#CarpetX::poison_undefined_arrays = no
 
 CarpetX::xmin = $xmin
 CarpetX::ymin = $xmin
@@ -181,7 +181,7 @@ AsterSeeds::dipole_x = [cocal_IDX::coc2cac_cen_x1, cocal_IDX::coc2cac_cen_x2]
 AsterX::debug_mode = "no"
 AsterX::flux_type = "HLLE"
 AsterX::use_uct = "yes"
-AsterX::vector_potential_gauge = "generalized Lorenz"
+AsterX::vector_potential_gauge = "generalized Lorentz"
 AsterX::lorenz_damp_fac = 1.5/($dtfac* ((2 * $xmax)/$ncells)) #0.625 #0.535714285714286 #1.07142857142857
 AsterX::local_spatial_order = 4
 AsterX::update_tmunu = "yes"
@@ -487,6 +487,7 @@ SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes" ]
 SphericalSurface::radius = [ 0.5*$xmax, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
 
 QuasiLocalMeasures::verbose = no
+QuasiLocalMeasures::interpolator_options = "order=3"
 QuasiLocalMeasures::num_surfaces = SphericalSurface::nsurfaces
 QuasiLocalMeasures::surface_index = [ 0, 1, 2, 3, 4 ]
 QuasiLocalMeasures::surface_name = [ "r = 0.5 xmax", "r = 0.6 xmax", "r = 0.7 xmax", "r = 0.8 xmax", "r = 0.9 xmax" ]

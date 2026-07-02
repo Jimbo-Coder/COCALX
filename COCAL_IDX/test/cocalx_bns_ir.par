@@ -19,7 +19,7 @@ ActiveThorns = "
 
 CarpetX::verbose = no
 CarpetX::poison_undefined_values = yes
-CarpetX::poison_undefined_arrays = no
+#CarpetX::poison_undefined_arrays = no
 
 CarpetX::xmin = -17.053447918351154
 CarpetX::xmax =  17.053447918351154
