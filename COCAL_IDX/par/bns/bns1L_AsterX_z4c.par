@@ -1,15 +1,15 @@
-# AsterX BNS APRLDP
+# AsterX BNS 1L
 
-$itlast = 4
-$final_time = 1000
+$itlast = 1000000000
+$final_time = 1.0e9
 $xmin = -128.0
 $xmax = +128.0
 $ncells = 64
-$nlevels = 3
+$nlevels = 5
 $error_threshold = 0.9
 $dtfac = 0.3
-$out_every = 1
-$out_every3d = 64
+$out_every = 64    # diagnostics, reductions, norms, TSV slices
+$out_every3d = 2048 # heavy grid/openPMD output
 
 ActiveThorns = "
 ADMBaseX
@@ -25,7 +25,7 @@ HydroBaseX
 #ID_TabEOS_HydroQuantities
 IOUtil
 #MeudonBNSX
-MHD_Diagnostics
+#MHD_Diagnostics
 ODESolvers
 Subcycling
 TimerReport
@@ -34,8 +34,6 @@ VolumeIntegrals_GRMHDX
 VolumeIntegrals_vacuumX
 Z4c
 
-SphericalSurface
-QuasiLocalMeasures
 #Multipole
 #WeylScal4
 #Outflow
@@ -45,7 +43,7 @@ QuasiLocalMeasures
 
 #Initial data
 #BNS 1L
-cocal_IDX::coc2cac_dir_path_ID = "/Users/mrizzo/phys_research/COCAL_IDs/bns/SP_K123.6_000"
+cocal_IDX::coc2cac_dir_path_ID = "/data/mrizzo7/coc2cac_IDs/BNS/SP_K123.6_000/work_area_BNS"
 cocal_IDX::coc2cac_readpot = "False"
 
 cocal_IDX::coc2cac_cen_x1 =  -2.403360820948883E+01
@@ -53,17 +51,17 @@ cocal_IDX::coc2cac_cen_x2 =  2.403360820948883E+01
 
 cocal_IDX::coc2cac_readformat = "20.12"
 
-Cactus::cctk_show_schedule = yes
+Cactus::cctk_show_schedule = no
 Cactus::presync_mode = "mixed-error"
 Cactus::terminate = "iteration"
-Cactus::cctk_itlast = 4
+Cactus::cctk_itlast = $itlast
 Cactus::cctk_final_time = $final_time
 #Cactus::max_runtime = 30   # minutes
 #Cactus::max_runtime = 23*60+30   # minutes
 
 CarpetX::verbose = no
 CarpetX::poison_undefined_values = no
-CarpetX::poison_undefined_arrays = no
+#CarpetX::poison_undefined_arrays = no
 
 CarpetX::xmin = $xmin
 CarpetX::ymin = $xmin
@@ -81,9 +79,9 @@ CarpetX::max_tile_size_x = 1024000
 CarpetX::max_tile_size_y = 1024000
 CarpetX::max_tile_size_z = 1024000
 
-CarpetX::blocking_factor_x = 1
-CarpetX::blocking_factor_y = 1
-CarpetX::blocking_factor_z = 1
+CarpetX::blocking_factor_x = 8
+CarpetX::blocking_factor_y = 8
+CarpetX::blocking_factor_z = 8
 
 CarpetX::max_grid_size_x = 64
 CarpetX::max_grid_size_y = 64
@@ -105,31 +103,31 @@ CarpetX::out_performance_every = $out_every
 
 CarpetX::refine_grid_layout = no
 
-#CarpetX::use_subcycling_wip = yes
-#CarpetX::restrict_during_sync = no
+CarpetX::use_subcycling = yes
+CarpetX::restrict_during_sync = no
 
 # -------------------- BoxInBox -------------------------------------------------
 BoxInBox::num_regions = 3
 
 # Region 1 CoM
 BoxInBox::shape_1 = "cube"
-BoxInBox::num_levels_1 = 2
+BoxInBox::num_levels_1 = 3
 BoxInBox::position_x_1 = 0.0
-BoxInBox::radius_1 = [-1, 64]
+BoxInBox::radius_1 = [-1, 96, 48]
 #res []
 
 # Region 2 LHS RNS
 BoxInBox::shape_2 = "cube"
-BoxInBox::num_levels_2 = 3
+BoxInBox::num_levels_2 = 5
 BoxInBox::position_x_2 = cocal_IDX::coc2cac_cen_x1
-BoxInBox::radius_2 = [-1, 32, 16]
+BoxInBox::radius_2 = [-1, 64, 32, 20, 14]
 #res [16, 8, 4, 2, 1, 0.5, 0.25]
 
 # Region 3 RHS RNS
 BoxInBox::shape_3 = "cube"
-BoxInBox::num_levels_3 = 3
+BoxInBox::num_levels_3 = 5
 BoxInBox::position_x_3 = cocal_IDX::coc2cac_cen_x2
-BoxInBox::radius_3 = [-1, 32, 16]
+BoxInBox::radius_3 = [-1, 64, 32, 20, 14]
 
 CarpetX::prolongation_type = "poly-cons3lfb"
 CarpetX::prolongation_order = 5
@@ -168,6 +166,9 @@ Z4c::boundary_conditions = "NewRadX"
 AsterAnalysis::compute_MHD = "yes"
 AsterAnalysis::compute_MHD_spherical = "no"
 
+AsterSeeds::set_Ye_postinitial = "yes"
+AsterSeeds::set_temperature_postinitial = "yes"
+AsterSeeds::set_entropy_postinitial = "yes"
 AsterSeeds::test_type = "3DTest"
 AsterSeeds::test_case = "magBNS"
 AsterSeeds::Afield_config = "internal dipole"
@@ -176,6 +177,9 @@ AsterSeeds::press_cut = 0.04
 AsterSeeds::press_max =  1.6263769283673767e-04
 AsterSeeds::Avec_kappa = 2.0
 AsterSeeds::dipole_x = [cocal_IDX::coc2cac_cen_x1, cocal_IDX::coc2cac_cen_x2]
+AsterSeeds::initial_beta = "no"
+AsterSeeds::set_coorbiting_vel = "no"
+AsterSeeds::seed_every = 100000000
 
 
 AsterX::debug_mode = "no"
@@ -222,6 +226,7 @@ EOSX::eps_max = 1e8
 EOSX::eps_min = 1.236e-09 
 
 ## diagnostics
+
 
 #------------------sphericalsurface--------------------------------------------
 #sphericalsurface::nsurfaces              = 4
@@ -307,8 +312,7 @@ CarpetX::recover_method    = "openpmd"
 #    #HydroBaseX::vel
 #    #HydroBaseX::eps
 #    HydroBaseX::press
-#    HydroBaseX::Bvec
-#    #AsterAnalysis::mhd_analysis
+##    #AsterAnalysis::mhd_analysis
 #    ADMBaseX::lapse
 #    ADMBaseX::shift
 #    ADMBaseX::metric
@@ -320,9 +324,7 @@ CarpetX::recover_method    = "openpmd"
 CarpetX::out_openpmd_vars = "
     HydroBaseX::rho
     HydroBaseX::vel
-    HydroBaseX::eps
     HydroBaseX::press
-    HydroBaseX::Bvec
     ADMBaseX::lapse
     ADMBaseX::shift
     ADMBaseX::metric
@@ -332,29 +334,20 @@ CarpetX::out_openpmd_vars = "
     Z4c::MtC
 "
 
-CarpetX::out_tsv_every = $out_every3d
+# Keep old/full 3D TSV disabled. CarpetX still writes 1D x/y/z TSV
+# slices from out_tsv_vars below via the newer OutputTSV path.
+CarpetX::out_tsv = no
+CarpetX::out_tsv_every = $out_every
 CarpetX::out_tsv_vars = "
-    AsterX::dB
-    HydroBaseX::Bvec
     HydroBaseX::rho
-    HydroBaseX::vel
     HydroBaseX::press
+    HydroBaseX::vel
     ADMBaseX::lapse
     ADMBaseX::shift
     ADMBaseX::metric
     ADMBaseX::curv
-    #TmunuBaseX::eTtt
-    #TmunuBaseX::eTti
-    #TmunuBaseX::eTij
-    #Z4c::allC
     Z4c::HC
     Z4c::MtC
-    SphericalSurface::sf_info
-    SphericalSurface::sf_origin
-    SphericalSurface::sf_valid
-    SphericalSurface::sf_radius
-    QuasiLocalMeasures::qlm_grid_real
-    QuasiLocalMeasures::qlm_scalars
 "
 
 
@@ -363,11 +356,11 @@ CarpetX::out_openpmd_every = $out_every3d
 
 
 # Set number of integrals
-VolumeIntegrals_GRMHDX::NumIntegrals = 0
+VolumeIntegrals_GRMHDX::NumIntegrals = 6
 
 # Set frequency of integration. If tracking AMR centres this should
 # match the regridding frequency of the thorn CactusRegrid2
-VolumeIntegrals_GRMHDX::VolIntegral_out_every = 0
+VolumeIntegrals_GRMHDX::VolIntegral_out_every = $out_every
 # CODEx-STAMP: VIGX_ASTERX_2026-02-27_07 (diagnostics for box motion)
 # Emit Silo snapshots every regrid cadence and write VI ASCII time series.
 
@@ -379,7 +372,7 @@ VolumeIntegrals_GRMHDX::outVolIntegral_dir = "volume_integration"
 
 # Set verbose level. 0 disables it, 1 provides useful
 # information, and 2 is very verbose.
-VolumeIntegrals_GRMHDX::verbose = 2
+VolumeIntegrals_GRMHDX::verbose = 1
 
 # Use VIX-computed CoM as origin (suppresses startup warning and enables CoM origin mode).
 VolumeIntegrals_GRMHDX::set_origin_with_VIX = yes
@@ -461,32 +454,35 @@ VolumeIntegrals_vacuumX::Momentum2VarString    = "Z4c::MtCz"
 VolumeIntegrals_vacuumX::enable_file_output    = 1
 
 VolumeIntegrals_vacuumX::outVolIntegral_dir    = "volume_integration"
-VolumeIntegrals_vacuumX::VolIntegral_out_every = 0
-VolumeIntegrals_vacuumX::NumIntegrals          = 0
+VolumeIntegrals_vacuumX::VolIntegral_out_every = $out_every
+VolumeIntegrals_vacuumX::NumIntegrals          = 6
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[1] = "H_M_CnstraintsL2"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[2] = "H_M2_CnstraintsL2"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[3] = "ADM_Mass"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[4] = "ADM_Momentum"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[5] = "ADM_Angular_Momentum"
+VolumeIntegrals_vacuumX::Integration_quantity_keyword[6] = "ADM_Mass"
+VolumeIntegrals_vacuumX::volintegral_inside_sphere__radius[6] = 0.98*$xmax
 
-SphericalSurface::nsurfaces = 5
-SphericalSurface::name[0] = "r = 0.5 xmax"
-SphericalSurface::name[1] = "r = 0.6 xmax"
-SphericalSurface::name[2] = "r = 0.7 xmax"
-SphericalSurface::name[3] = "r = 0.8 xmax"
-SphericalSurface::name[4] = "r = 0.9 xmax"
+#SphericalSurface::nsurfaces = 5
+#SphericalSurface::name[0] = "r = 0.5 xmax"
+#SphericalSurface::name[1] = "r = 0.6 xmax"
+#SphericalSurface::name[2] = "r = 0.7 xmax"
+#SphericalSurface::name[3] = "r = 0.8 xmax"
+#SphericalSurface::name[4] = "r = 0.9 xmax"
 
-SphericalSurface::maxntheta = 19
-SphericalSurface::maxnphi = 40
+#SphericalSurface::maxntheta = 19
+#SphericalSurface::maxnphi = 40
 
-SphericalSurface::auto_res = [ "no", "no", "no", "no", "no" ]
-SphericalSurface::ntheta = [ 19, 19, 19, 19, 19 ]
-SphericalSurface::nphi = [ 40, 40, 40, 40, 40 ]
+#SphericalSurface::auto_res = [ "no", "no", "no", "no", "no" ]
+#SphericalSurface::ntheta = [ 19, 19, 19, 19, 19 ]
+#SphericalSurface::nphi = [ 40, 40, 40, 40, 40 ]
 
-SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes" ]
-SphericalSurface::radius = [ 0.5*$xmax, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
+#SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes" ]
+#SphericalSurface::radius = [ 0.5*$xmax, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
 
-QuasiLocalMeasures::verbose = no
-QuasiLocalMeasures::num_surfaces = SphericalSurface::nsurfaces
-QuasiLocalMeasures::surface_index = [ 0, 1, 2, 3, 4 ]
-QuasiLocalMeasures::surface_name = [ "r = 0.5 xmax", "r = 0.6 xmax", "r = 0.7 xmax", "r = 0.8 xmax", "r = 0.9 xmax" ]
+#QuasiLocalMeasures::verbose = no
+#QuasiLocalMeasures::interpolator_options = "order=3"
+#QuasiLocalMeasures::num_surfaces = SphericalSurface::nsurfaces
+#QuasiLocalMeasures::surface_index = [ 0, 1, 2, 3, 4 ]
+#QuasiLocalMeasures::surface_name = [ "r = 0.5 xmax", "r = 0.6 xmax", "r = 0.7 xmax", "r = 0.8 xmax", "r = 0.9 xmax" ]

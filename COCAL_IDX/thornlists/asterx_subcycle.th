@@ -237,7 +237,7 @@ CarpetX/ErrorEstimator
 CarpetX/HydroBaseX
 CarpetX/Loop
 CarpetX/ODESolvers
-#CarpetX/PDESolvers
+CarpetX/PDESolvers
 #CarpetX/PoissonX
 CarpetX/Subcycling
 CarpetX/TestArrayGroup
@@ -275,7 +275,7 @@ SpacetimeX/Z4c
 !TYPE     = git
 !URL      = https://github.com/EinsteinToolkit/AsterX.git
 !REPO_PATH= $2
-!REPO_BRANCH = devSC
+!REPO_BRANCH = dev
 !CHECKOUT =
 AsterX/AsterSeeds
 AsterX/AsterUtils
@@ -301,17 +301,26 @@ AsterX/AsterAnalysis
 #nuX/nuX_FakeRates
 
 
-# private thorns
+# BNSTools VolumeIntegrals
+# Once the VolumeIntegrals PR is merged, this should work directly from main.
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://github.com/jaykalinani/BNSTools.git
+!REPO_PATH= $2
+!REPO_BRANCH=main
+!CHECKOUT =
+#BNSTools/MHD_Diagnostics
+BNSTools/VolumeIntegrals_GRMHDX
+BNSTools/VolumeIntegrals_vacuumX
+#BNSTools/Outflow
+
+# local COCAL_IDX checkout
 !TARGET = $ARR
 !TYPE   = ignore
 !CHECKOUT =
 COCALX/COCAL_IDX
 
-BNSTools/MHD_Diagnostics
-BNSTools/VolumeIntegrals_GRMHDX
-BNSTools/VolumeIntegrals_vacuumX
-
-#BNSTools/Outflow
-SpacetimeX_qlm/SphericalSurface
-SpacetimeX_qlm/QuasiLocalMeasures
-SpacetimeX_qlm/TGRtensor
+# Optional QLM + support
+#SpacetimeX_qlm/SphericalSurface
+#SpacetimeX_qlm/QuasiLocalMeasures
+#SpacetimeX_qlm/TGRtensor
