@@ -1,15 +1,15 @@
-# AsterX BNS IG parfile
+# AsterX RNS 1L
 
-$itlast = 4
-$final_time = 1000
-$xmin = -256 #-512.0
-$xmax = 256 #+512.0
-$ncells = 16
+$itlast = 1000000000
+$final_time = 1.0e9
+$xmin = -128.0
+$xmax = 128.0
+$ncells = 64
 $nlevels = 5
 $error_threshold = 0.9
 $dtfac = 0.25
-$out_every = 1
-$out_every3d = 64
+$out_every = 64    # diagnostics, reductions, norms, TSV slices
+$out_every3d = 2048 # heavy grid/openPMD output
 
 ActiveThorns = "
 ADMBaseX
@@ -29,25 +29,22 @@ Subcycling
 #SystemTopology
 TimerReport
 TmunuBaseX
-TGRtensor
 VolumeIntegrals_GRMHDX
 VolumeIntegrals_vacuumX
 Z4c
-SphericalSurface
-QuasiLocalMeasures
 #Outflow
 "
 
-Cactus::cctk_show_schedule = yes
+Cactus::cctk_show_schedule = no
 Cactus::presync_mode = "mixed-error"
 Cactus::terminate = "iteration"
-Cactus::cctk_itlast = 4
+Cactus::cctk_itlast = $itlast
 Cactus::cctk_final_time = $final_time
 #Cactus::max_runtime = 30   # minutes
 #Cactus::max_runtime = 23*60+30   # minutes
 
 CarpetX::verbose = no
-CarpetX::poison_undefined_values = yes
+CarpetX::poison_undefined_values = no
 #CarpetX::poison_undefined_arrays = no
 
 CarpetX::xmin = $xmin
@@ -66,9 +63,9 @@ CarpetX::max_tile_size_x = 1024000
 CarpetX::max_tile_size_y = 1024000
 CarpetX::max_tile_size_z = 1024000
 
-#CarpetX::blocking_factor_x = 1
-#CarpetX::blocking_factor_y = 1
-#CarpetX::blocking_factor_z = 1
+CarpetX::blocking_factor_x = 8
+CarpetX::blocking_factor_y = 8
+CarpetX::blocking_factor_z = 8
 
 CarpetX::max_grid_size_x = 64
 CarpetX::max_grid_size_y = 64
@@ -88,7 +85,7 @@ CarpetX::boundary_upper_z = "neumann" #"dirichlet"
 CarpetX::ghost_size = 3
 
 CarpetX::max_num_levels = 6
-CarpetX::regrid_every = 1280000
+CarpetX::regrid_every = 8
 CarpetX::regrid_error_threshold = $error_threshold
 CarpetX::out_performance_every = $out_every
 
@@ -97,19 +94,17 @@ CarpetX::refine_grid_layout = no
 #Initial data
 #RNS WL 1L /anvil/projects/x-mca99s008/coc2cac_IDs/rns/rnsH3_K123.6_WL_M1.4_par_sol_24 radius about 13
 #RNS CF 1L /anvil/projects/x-mca99s008/coc2cac_IDs/rns/rnsH3_K123.6_CF_M1.4_par_sol_24
-cocal_IDX::coc2cac_dir_path_ID = "/Users/mrizzo/phys_research/COCAL_IDs/rns/rnsH3_K123.6_CF_M1.4_par_sol_24"
+cocal_IDX::coc2cac_dir_path_ID = "/data/mrizzo7/coc2cac_IDs/RNS/rnsH3_K123.6_CF_M1.4_par_sol_24/work_area_RNS"
 cocal_IDX::coc2cac_readpot = "False"
 cocal_IDX::coc2cac_rnstype         = "RNS_CF"
 
 cocal_IDX::coc2cac_readformat = "20.12"
 
-cocal_IDX::verbose = "True"
+cocal_IDX::verbose = "False"
 
 #Subcycling
-CarpetX::use_subcycling_wip = yes
+CarpetX::use_subcycling = yes
 CarpetX::restrict_during_sync = no
-AsterX::timelevels = 2
-Z4c::timelevels = 2
 
 # -------------------- BoxInBox -------------------------------------------------
 BoxInBox::num_regions = 1
@@ -118,13 +113,13 @@ BoxInBox::num_regions = 1
 BoxInBox::shape_1 = "cube"
 BoxInBox::num_levels_1 = $nlevels
 BoxInBox::position_x_1 = 0.0
-BoxInBox::radius_1 = [-1, 128, 64, 32, 16]
+BoxInBox::radius_1 = [-1, 64, 32, 20, 14]
 #BoxInBox::radius_1 = [-1]
 #dx = 6.4, 3.2, 1.6, 0.8, 0.4, 0.2, 0.1
 
 CarpetX::prolongation_type = "poly-cons3lfb"
 CarpetX::prolongation_order = 5
-CarpetX::interpolation_order = 1
+CarpetX::interpolation_order = 3
 
 ODESolvers::verbose = no
 ODESolvers::method = "RK4" #"RK4"
@@ -137,6 +132,10 @@ ADMBaseX::initial_shift = "Cocal"
 ADMBaseX::initial_dtlapse = "zero"
 ADMBaseX::initial_dtshift = "zero"
 HydroBaseX::initial_hydro = "Cocal"
+
+AsterSeeds::set_Ye_postinitial = "yes"
+AsterSeeds::set_temperature_postinitial = "yes"
+AsterSeeds::set_entropy_postinitial = "yes"
 
 
 Z4c::calc_ADM_vars = yes                  # for Weyl
@@ -165,7 +164,7 @@ AsterSeeds::dipole_x = [0.0]
 AsterX::debug_mode = "no"
 AsterX::flux_type = "HLLE"
 AsterX::use_uct = "yes"
-AsterX::vector_potential_gauge = "generalized Lorentz"
+AsterX::vector_potential_gauge = "generalized Lorenz"
 AsterX::lorenz_damp_fac = 1.5/($dtfac* ((2 * $xmax)/$ncells))
 AsterX::local_spatial_order = 4
 AsterX::update_tmunu = "yes"
@@ -205,72 +204,39 @@ EOSX::eps_max = 1e8
 EOSX::eps_min = 1.236e-09 
 
 IO::out_dir = $parfile
-IO::out_every = $out_every3d #
+IO::out_every = $out_every
 CarpetX::out_norm_vars = "all"
 CarpetX::out_norm_omit_unstable = yes
 CarpetX::out_norm_every = $out_every
-CarpetX::out_tsv_combine_iterations = yes
-CarpetX::out_tsv = yes
-#CarpetX::out_silo_compression_options = "METHOD=GZIP"
-
-#CarpetX::out_silo_vars = "
-#    HydroBaseX::rho
-#    HydroBaseX::vel
-#    HydroBaseX::eps
-#    HydroBaseX::press
-#    HydroBaseX::Bvec
-#    #AsterAnalysis::mhd_analysis
-#    ADMBaseX::lapse
-#    ADMBaseX::shift
-#    ADMBaseX::metric
-#    #Z4c::allC
-#    Z4c::HC
-#    Z4c::MtC
-#"
-
-CarpetX::out_openpmd_vars = "
+# Keep old/full 3D TSV disabled. CarpetX still writes 1D x/y/z TSV
+# slices from out_tsv_vars below via the newer OutputTSV path.
+CarpetX::out_tsv = no
+CarpetX::out_tsv_every = $out_every
+CarpetX::out_tsv_vars = "
     HydroBaseX::rho
-    HydroBaseX::vel
-    HydroBaseX::eps
     HydroBaseX::press
-    HydroBaseX::Bvec
+    HydroBaseX::vel
     ADMBaseX::lapse
     ADMBaseX::shift
     ADMBaseX::metric
     ADMBaseX::curv
-    #Z4c::allC
     Z4c::HC
     Z4c::MtC
 "
 
-CarpetX::out_tsv_every = $out_every
-CarpetX::out_tsv_vars = "
-    AsterX::dB
-     HydroBaseX::rho
-     HydroBaseX::vel
-     HydroBaseX::eps
-     HydroBaseX::Bvec
+CarpetX::out_metadata = yes
+CarpetX::out_openpmd_every = $out_every3d
+CarpetX::out_openpmd_vars = "
+    HydroBaseX::rho
     HydroBaseX::press
+    HydroBaseX::vel
     ADMBaseX::lapse
     ADMBaseX::shift
     ADMBaseX::metric
     ADMBaseX::curv
-#    #TmunuBaseX::eTtt
-#    #TmunuBaseX::eTti
-#    #TmunuBaseX::eTij
-#    #Z4c::allC
-#    Z4c::HC
-#    Z4c::MtC
-    SphericalSurface::sf_info
-    SphericalSurface::sf_origin
-    SphericalSurface::sf_valid
-    SphericalSurface::sf_radius
-    QuasiLocalMeasures::qlm_grid_real
-    QuasiLocalMeasures::qlm_scalars
+    Z4c::HC
+    Z4c::MtC
 "
-
-CarpetX::out_metadata = yes
-CarpetX::out_openpmd_every = $out_every3d
 
 TimerReport::out_every = $out_every
 TimerReport::out_filename = "TimerReport"
@@ -337,29 +303,29 @@ VolumeIntegrals_vacuumX::volintegral_inside_sphere__radius[4] = 0.95*$xmax
 
 
 
-SphericalSurface::nsurfaces = 5
-SphericalSurface::verbose = yes
-SphericalSurface::name[0] = "r = 0.5 xmax"
-SphericalSurface::name[1] = "r = 0.6 xmax"
-SphericalSurface::name[2] = "r = 0.7 xmax"
-SphericalSurface::name[3] = "r = 0.8 xmax"
-SphericalSurface::name[4] = "r = 0.9 xmax"
+#SphericalSurface::nsurfaces = 5
+#SphericalSurface::verbose = yes
+#SphericalSurface::name[0] = "r = 0.5 xmax"
+#SphericalSurface::name[1] = "r = 0.6 xmax"
+#SphericalSurface::name[2] = "r = 0.7 xmax"
+#SphericalSurface::name[3] = "r = 0.8 xmax"
+#SphericalSurface::name[4] = "r = 0.9 xmax"
 
-SphericalSurface::maxntheta = 19
-SphericalSurface::maxnphi = 40
+#SphericalSurface::maxntheta = 19
+#SphericalSurface::maxnphi = 40
 
-SphericalSurface::auto_res = [ "no", "no", "no", "no", "no" ]
-SphericalSurface::ntheta = [ 19, 19, 19, 19, 19 ]
-SphericalSurface::nphi = [ 40, 40, 40, 40, 40 ]
+#SphericalSurface::auto_res = [ "no", "no", "no", "no", "no" ]
+#SphericalSurface::ntheta = [ 19, 19, 19, 19, 19 ]
+#SphericalSurface::nphi = [ 40, 40, 40, 40, 40 ]
 
-SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes" ]
-SphericalSurface::radius = [ 0.5*$xmax, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
+#SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes" ]
+#SphericalSurface::radius = [ 0.5*$xmax, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
 
-QuasiLocalMeasures::verbose = yes
-QuasiLocalMeasures::veryverbose = yes
-QuasiLocalMeasures::num_surfaces = SphericalSurface::nsurfaces
-QuasiLocalMeasures::surface_index = [ 0, 1, 2, 3, 4 ]
-QuasiLocalMeasures::surface_name = [ "r = 0.5 xmax", "r = 0.6 xmax", "r = 0.7 xmax", "r = 0.8 xmax", "r = 0.9 xmax" ]
+#QuasiLocalMeasures::verbose = yes
+#QuasiLocalMeasures::veryverbose = yes
+#QuasiLocalMeasures::num_surfaces = SphericalSurface::nsurfaces
+#QuasiLocalMeasures::surface_index = [ 0, 1, 2, 3, 4 ]
+#QuasiLocalMeasures::surface_name = [ "r = 0.5 xmax", "r = 0.6 xmax", "r = 0.7 xmax", "r = 0.8 xmax", "r = 0.9 xmax" ]
 #
 #Outflow::compute_every = $out_every
 #Outflow::num_detectors = SphericalSurface::nsurfaces
