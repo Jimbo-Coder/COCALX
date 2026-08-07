@@ -143,6 +143,23 @@
 
 !#include <mpi.h>
 !
+module cocal_idx_carpetx_coordinates
+  use iso_c_binding, only: c_double, c_int, c_intptr_t
+  implicit none
+
+  interface
+    subroutine COCAL_IDX_FillCoordinates(cctkGH_address, centering_i, &
+        centering_j, centering_k, nx, ny, nz, coordinates) &
+        bind(C, name="COCAL_IDX_FillCoordinates")
+      import c_double, c_int, c_intptr_t
+      integer(c_intptr_t), value :: cctkGH_address
+      integer(c_int), value :: centering_i, centering_j, centering_k
+      integer(c_int), value :: nx, ny, nz
+      real(c_double), intent(out) :: coordinates(*)
+    end subroutine COCAL_IDX_FillCoordinates
+  end interface
+end module cocal_idx_carpetx_coordinates
+
 module cocal_data_rns
   implicit none
 
@@ -162,7 +179,8 @@ module cocal_data_rns
   real(8), pointer, save :: kxxa(:,:,:) => NULL()  , kxya(:,:,:) => NULL()  , kxza(:,:,:) => NULL()  , kyya(:,:,:) => NULL(), &
                             kyza(:,:,:) => NULL() , kzza(:,:,:) => NULL()
 
-  real(8), pointer, save ::  va(:,:,:) => NULL()  , vaxd(:,:,:) => NULL() , vayd(:,:,:) => NULL() , vazd(:,:,:) => NULL()                           ! (phi,A)
+  real(8), pointer, save :: va(:,:,:) => NULL(), vaxd(:,:,:) => NULL(), &
+                            vayd(:,:,:) => NULL(), vazd(:,:,:) => NULL() ! (phi,A)
   real(8), pointer, save :: fxd(:,:,:) => NULL()  ,  fyd(:,:,:) => NULL() ,  fzd(:,:,:) => NULL() , fxyd(:,:,:) => NULL(), &
                             fxzd(:,:,:) => NULL(), fyzd(:,:,:) => NULL() ! Faraday tensor
 
@@ -832,13 +850,12 @@ subroutine coc2cac_main(CCTK_ARGUMENTS)
   DECLARE_CCTK_PARAMETERS
 
   interface
-  subroutine coc2cac_rns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
+  subroutine coc2cac_rns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
         alp, betax, betay, betaz, &
         gxx, gxy, gxz, gyy, gyz, gzz, &
         kxx, kxy, kxz, kyy, kyz, kzz, &
         rho, eps, press, velx, vely, velz, &
-        Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz, &
-        vcoordx, vcoordy , vcoordz, ccoordx, ccoordy , ccoordz)
+        Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz)
 
     use phys_constant
     use grid_parameter, eps_cocal => eps
@@ -866,6 +883,7 @@ subroutine coc2cac_main(CCTK_ARGUMENTS)
 
     implicit none
 
+    integer(kind=8) :: cctkGH
     integer, dimension(3) :: cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max
     CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)) :: &
         alp, betax, betay, betaz, &
@@ -885,20 +903,14 @@ subroutine coc2cac_main(CCTK_ARGUMENTS)
     CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)-1) :: &
         Avecz
 
-    CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)), target :: &
-        vcoordx, vcoordy, vcoordz
-
-    CCTK_REAL, dimension(cctk_ash(1)-1, cctk_ash(2)-1, cctk_ash(3)-1), target :: &
-        ccoordx, ccoordy, ccoordz
   end subroutine
 
-  subroutine coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
+  subroutine coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
         alp, betax, betay, betaz, &
         gxx, gxy, gxz, gyy, gyz, gzz, &
         kxx, kxy, kxz, kyy, kyz, kzz, &
         rho, eps, press, velx, vely, velz, &
-        Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz, &
-        vcoordx, vcoordy , vcoordz, ccoordx, ccoordy , ccoordz)
+        Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz)
       
        use grid_parameter_binary_excision
        use phys_constant
@@ -924,6 +936,7 @@ subroutine coc2cac_main(CCTK_ARGUMENTS)
          
     implicit none
 
+    integer(kind=8) :: cctkGH
     integer, dimension(3) :: cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max
     CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)) :: &
         alp, betax, betay, betaz, &
@@ -943,11 +956,6 @@ subroutine coc2cac_main(CCTK_ARGUMENTS)
     CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)-1) :: &
         Avecz
 
-    CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)), target :: &
-        vcoordx, vcoordy, vcoordz
-
-    CCTK_REAL, dimension(cctk_ash(1)-1, cctk_ash(2)-1, cctk_ash(3)-1), target :: &
-        ccoordx, ccoordy, ccoordz
   end subroutine
 
   end interface
@@ -955,23 +963,21 @@ subroutine coc2cac_main(CCTK_ARGUMENTS)
 
   if (CCTK_EQUALS(initial_data, "CocalRNS")) then
     call CCTK_INFO("Executing Main Cocal RNS Reader")
-    call coc2cac_rns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
+    call coc2cac_rns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
       alp, betax, betay, betaz, &
       gxx, gxy, gxz, gyy, gyz, gzz, &
       kxx, kxy, kxz, kyy, kyz, kzz, &
       rho, eps, press, velx, vely, velz, &
-      Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz, &
-      vcoordx, vcoordy , vcoordz, ccoordx, ccoordy , ccoordz)
+      Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz)
   else if (CCTK_EQUALS(initial_data, "CocalBNS")) then
     call CCTK_INFO("Executing Main Cocal BNS Reader")
     
-    call coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
+    call coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
       alp, betax, betay, betaz, &
       gxx, gxy, gxz, gyy, gyz, gzz, &
       kxx, kxy, kxz, kyy, kyz, kzz, &
       rho, eps, press, velx, vely, velz, &
-      Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz, &
-      vcoordx, vcoordy , vcoordz, ccoordx, ccoordy , ccoordz)
+      Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz)
   end if
 end subroutine coc2cac_main
 
@@ -1093,13 +1099,12 @@ subroutine coc2cac_deallocate_bns(CCTK_ARGUMENTS)
 end subroutine
 
 !RNS Routine
-  subroutine coc2cac_rns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,&
+  subroutine coc2cac_rns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,&
       alp, betax, betay, betaz, &
       gxx, gxy, gxz, gyy, gyz, gzz, &
       kxx, kxy, kxz, kyy, kyz, kzz, &
       rho, eps, press, velx, vely, velz, &
-      Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz, &
-      vcoordx, vcoordy , vcoordz, ccoordx, ccoordy , ccoordz)
+      Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz)
 
   use phys_constant
   use grid_parameter, eps_cocal => eps
@@ -1122,11 +1127,13 @@ end subroutine
   use interface_IO_input_grav_export_Faraday       !
   use interface_IO_input_star4ve_export            !
   use cocal_data_rns
+  use cocal_idx_carpetx_coordinates, only: COCAL_IDX_FillCoordinates
   
 
 
   implicit none
 
+  integer(kind=8) :: cctkGH
   integer, dimension(3) :: cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max
   CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)) :: &
       alp, betax, betay, betaz, &
@@ -1145,12 +1152,6 @@ end subroutine
       Avecy
   CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)-1) :: &
       Avecz
-
-  CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)), target :: &
-      vcoordx, vcoordy, vcoordz
-
-  CCTK_REAL, dimension(cctk_ash(1)-1, cctk_ash(2)-1, cctk_ash(3)-1), target :: &
-      ccoordx, ccoordy, ccoordz
 
   DECLARE_CCTK_FUNCTIONS
   DECLARE_CCTK_PARAMETERS
@@ -1176,39 +1177,30 @@ end subroutine
   real(8) :: vxu, vyu, vzu
   real(8) :: bxcor, bycor, bzcor, bvxufca, bvyufca, bvzufca, psifca, alphfca
   real(8) :: gxx1, gxy1, gxz1, gyy1, gyz1, gzz1, kxx1, kxy1, kxz1, kyy1, kyz1, kzz1
-
   real(8) :: va1, vaxd1, vayd1, vazd1, fxd1, fyd1, fzd1, fxyd1, fxzd1, fyzd1!
   real(8) :: vaca, vaxdca, vaydca, vazdca, fxdca, fydca, fzdca, fxydca, fxzdca, fyzdca!
   real(8) :: utfca, uxfca, uyfca, uzfca ! Fluid 4 vel
   real(8) :: gr_wr(4), gr_wth(4), gr_wphi(4)
   real(8) :: fl_wr(4), fl_wth(4), fl_wphi(4)
+  real(8), allocatable :: carpetx_coords(:,:,:,:)
 
   integer :: cent
   integer :: gr_irgex4(4,4,4), gr_itgex4(4,4,4), gr_ipgex4(4,4,4)
   integer :: fl_irgex4(4,4,4), fl_itgex4(4,4,4), fl_ipgex4(4,4,4)
-  real(8), pointer :: x(:,:,:), y(:,:,:), z(:,:,:)
   ! 0 -> vertex, 1 -> cell
   integer, parameter, dimension(3,5) :: centering =  reshape( (/0,0,0, 1,1,1, 1,0,0, 0,1,0, 0,0,1/), shape=(/3,5/))
   !call MPI_Init(mpierr)
   !call MPI_Comm_rank(MPI_COMM_WORLD, rank, mpierr)
   !call MPI_Finalize(mpierr)
 
+  if (.not. have_read_data) then
+    call CCTK_ERROR("COCAL_IDX::coc2cac_rns called before coc2cac_read_rns_data completed. Refusing fallback per-level read.")
+  end if
+
+  allocate(carpetx_coords(3,cctk_ash(1),cctk_ash(2),cctk_ash(3)))
   do cent = 1,5
-  if (centering(1,cent) .eq. 0) then
-    x => vcoordx
-  else
-    x => ccoordx
-  endif
-  if (centering(2,cent) .eq. 0) then
-    y => vcoordy
-  else
-    y => ccoordy
-  endif
-  if (centering(3,cent) .eq. 0) then
-    z => vcoordz
-  else
-    z => ccoordz
-  endif
+    call COCAL_IDX_FillCoordinates(cctkGH, centering(1,cent), centering(2,cent), &
+        centering(3,cent), cctk_ash(1), cctk_ash(2), cctk_ash(3), carpetx_coords)
   if (verbose == 1) then 
     call CCTK_INFO("Cocal matrices and points declared")
   end if
@@ -1263,19 +1255,15 @@ end subroutine
 
       call CCTK_FortranString(coc2cac_readformatlen,coc2cac_readformat,coc2cac_readformatf)
 
-      if (.not. have_read_data) then
-         call CCTK_ERROR("COCAL_IDX::coc2cac_rns called before coc2cac_read_rns_data completed. Refusing fallback per-level read.")
-      end if
-      
          do k = kmin, kmax
             do j = jmin, jmax
                do i = imin, imax
-               ! TODO: fix vertex / cell issues
-               xcac = x(i,j,k) - coc2cac_cen_x1
-               ycac = y(i,j,k) - coc2cac_cen_y1
-               zcac = z(i,j,k) - coc2cac_cen_z1
-               !vcordx in carpetx for cell vertex
-               !ccordx in carpetx for cell center
+               xcac = carpetx_coords(1,i,j,k)
+               ycac = carpetx_coords(2,i,j,k)
+               zcac = carpetx_coords(3,i,j,k)
+               xcac = xcac - coc2cac_cen_x1
+               ycac = ycac - coc2cac_cen_y1
+               zcac = zcac - coc2cac_cen_z1
          !        write(6,*)' i, j, k, xcac, ycac, zcac', i, j, k, xcac, ycac, zcac
 
                xcoc = xcac/(radi)
@@ -1567,6 +1555,7 @@ end subroutine
          !call CCTK_INFO("Cocal: Done Deallocating...")
       end if
    end do
+deallocate(carpetx_coords)
 ! if (coc2cac_copyID == 1) then
 !   call CCTK_INFO("Copying Initial Data to Output Directory...")
 !   call execute_command_line("cp -r " // trim(dir_path) // " " // trim(cocout_dir) // "/")
@@ -1585,13 +1574,12 @@ END subroutine coc2cac_rns
  !      MASTER CF BNS COCAL ID READER to CACTUS
  !______________________________________________
 
-SUBROUTINE coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
+SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
       alp, betax, betay, betaz, &
       gxx, gxy, gxz, gyy, gyz, gzz, &
       kxx, kxy, kxz, kyy, kyz, kzz, &
       rho, eps, press, velx, vely, velz, &
-      Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz, &
-      vcoordx, vcoordy , vcoordz, ccoordx, ccoordy , ccoordz)
+      Bvecx, Bvecy, Bvecz, Avecx, Avecy, Avecz)
  !
    use grid_parameter_binary_excision
    use phys_constant
@@ -1614,12 +1602,14 @@ SUBROUTINE coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
    use interface_interpo_gr2fl_metric_CF_export
    use interface_IO_input_gradvep_export !unique to IR/SP
    use cocal_data_bns
+   use cocal_idx_carpetx_coordinates, only: COCAL_IDX_FillCoordinates
    
    
    
 
    implicit none
 
+   integer(kind=8) :: cctkGH
    integer, dimension(3) :: cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max
    CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)) :: &
        alp, betax, betay, betaz, &
@@ -1639,12 +1629,6 @@ SUBROUTINE coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
    CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)-1) :: &
        Avecz
  
-   CCTK_REAL, dimension(cctk_ash(1), cctk_ash(2), cctk_ash(3)), target :: &
-       vcoordx, vcoordy, vcoordz
- 
-   CCTK_REAL, dimension(cctk_ash(1)-1, cctk_ash(2)-1, cctk_ash(3)-1), target :: &
-       ccoordx, ccoordy, ccoordz
-
    DECLARE_CCTK_FUNCTIONS
    DECLARE_CCTK_PARAMETERS
    integer :: i, j, k, imin, imax, jmin, jmax, kmin, kmax
@@ -1670,13 +1654,14 @@ SUBROUTINE coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
    real(8) :: rrcm, xc,yc,zc, xc_p1, yc_p1, zc_p1, xc_p2, yc_p2, zc_p2
    real(8) :: xc_p3, yc_p3, zc_p3
    real(8) :: xcac, ycac, zcac
-   real(8) :: xcoc, ycoc, zcoc
+   real(8) :: xcoc, ycoc, zcoc, xmid_tol
    real(8) :: emdca, vepca, psica, alphca, bvxdca, bvydca, bvzdca, psi4ca, psif4ca
    real(8) :: hca, preca, rhoca, eneca, epsca
    real(8) :: vxu, vyu, vzu, lam_p1, lam_p2 
    real(8) :: bxcor, bycor, bzcor, bvxdfca, bvydfca, bvzdfca, psifca, alphfca
    real(8) :: gxx1, gxy1, gxz1, gyy1, gyz1, gzz1, kxx1, kxy1, kxz1, kyy1, kyz1, kzz1
    real(8) :: axx, axy, axz, ayy, ayz, azz
+   real(8), allocatable :: carpetx_coords(:,:,:,:)
  !
    real(long) ::  rc_p1, thc_p1, phic_p1, varpic_p1, rcf_p1, rsca_p1
    real(long) ::  rc_p2, thc_p2, phic_p2, varpic_p2, rcf_p2, rsca_p2
@@ -1707,31 +1692,18 @@ SUBROUTINE coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
    real(long), external :: lagint_4th_apply
  !
    integer :: cent
-   real(8), pointer :: x(:,:,:), y(:,:,:), z(:,:,:)
    ! 0 -> vertex, 1 -> cell
    integer, parameter, dimension(3,5) :: centering =  reshape( (/0,0,0, 1,1,1, 1,0,0, 0,1,0, 0,0,1/), shape=(/3,5/))
+   xmid_tol = 64.0d0*epsilon(1.0d0)*max(1.0d0,abs(dis_cm))
  
-   do cent = 1,5
-   if (centering(1,cent) .eq. 0) then
-     x => vcoordx
-   else
-     x => ccoordx
-   endif
-   if (centering(2,cent) .eq. 0) then
-     y => vcoordy
-   else
-     y => ccoordy
-   endif
-   if (centering(3,cent) .eq. 0) then
-     z => vcoordz
-   else
-     z => ccoordz
-   endif
-   
    if (.not. have_read_data) then
       call CCTK_ERROR("COCAL_IDX::coc2cac_bns called before coc2cac_read_bns_data completed. Refusing fallback per-level read.")
    end if
 
+   allocate(carpetx_coords(3,cctk_ash(1),cctk_ash(2),cctk_ash(3)))
+   do cent = 1,5
+      call COCAL_IDX_FillCoordinates(cctkGH, centering(1,cent), centering(2,cent), &
+          centering(3,cent), cctk_ash(1), cctk_ash(2), cctk_ash(3), carpetx_coords)
    if (verbose == 1) then
       write(outstr,'(2e20.12)') emd_p1(0,0,0), emd_p1(58,0,0)
       call CCTK_INFO("First and Last emd_p1:"//outstr)
@@ -1774,9 +1746,9 @@ SUBROUTINE coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
    do k = kmin, kmax
      do j = jmin, jmax
        do i = imin, imax
-         xcac = x(i,j,k)
-         ycac = y(i,j,k)
-         zcac = z(i,j,k)
+         xcac = carpetx_coords(1,i,j,k)
+         ycac = carpetx_coords(2,i,j,k)
+         zcac = carpetx_coords(3,i,j,k)
          !write(6,*)' i, j, k, xcac, ycac, zcac', i, j, k, xcac, ycac, zcac
          
          xcoc = xcac/(radi_p1)
@@ -1897,7 +1869,8 @@ SUBROUTINE coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
            vzu = 0.0d0
            emdca = 0.0d0
          else
-           if (xcoc<=0.0d0) then
+           ! Keep the patch tie-break stable on nominal x=0 grid planes.
+           if (xcoc <= xmid_tol) then
        !=>      call copy_from_mpatch_interpolation_utility(1)
        !      call copy_grid_parameter_from_mpt(1)
        !      call copy_grid_parameter_binary_excision_from_mpt(1)
@@ -2576,4 +2549,5 @@ SUBROUTINE coc2cac_bns(cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max, &
       call CCTK_INFO("Finishing COCAL bns reader")
    end if
 end do
+deallocate(carpetx_coords)
  END SUBROUTINE coc2cac_bns

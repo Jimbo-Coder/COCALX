@@ -1,5 +1,6 @@
-# AsterX MRNS 1L
-# Requires the MRNS-capable COCAL_IDX/AsterX branch for vector-potential initialization.
+# CarpetX + AsterX + Z4c: magnetized waveless RNS
+# Direct AsterX vector-potential initialization requires the AsterX-Msup branch.
+# Semiproduction grid; make temporary reduced copies for local smoke tests.
 
 $itlast = 1000000000
 $final_time = 1.0e9
@@ -10,29 +11,30 @@ $out_every = 64    # diagnostics, reductions, norms, TSV slices
 $out_every3d = 2048 # heavy grid/openPMD output
 
 ActiveThorns = "
-ADMBaseX
-AsterAnalysis
-AsterMasks
-AsterSeeds
-AsterX
-BoxInBox
-CarpetX
-CarpetXRegrid
-Con2PrimFactory
-CoordinatesX
-cocal_IDX
-EOSX
-HydroBaseX
-IOUtil
-ODESolvers
-ReconX
-Subcycling
-TimerReport
-TmunuBaseX
-VolumeIntegrals_GRMHDX
-VolumeIntegrals_vacuumX
-Z4c
-NewRadX"
+  ADMBaseX
+  AsterAnalysis
+  AsterMasks
+  AsterSeeds
+  AsterX
+  BoxInBox
+  CarpetX
+  CarpetXRegrid
+  Con2PrimFactory
+  CoordinatesX
+  COCAL_IDX
+  EOSX
+  HydroBaseX
+  IOUtil
+  NewRadX
+  ODESolvers
+  ReconX
+  Subcycling
+  TimerReport
+  TmunuBaseX
+  VolumeIntegrals_GRMHDX
+  VolumeIntegrals_vacuumX
+  Z4c
+"
 
 Cactus::cctk_run_title = "MRNS COCALX reader"
 Cactus::presync_mode = "mixed-error"
@@ -43,7 +45,6 @@ Cactus::cctk_show_schedule = no
 
 CarpetX::verbose = no
 CarpetX::poison_undefined_values = no
-CarpetX::poison_undefined_arrays = no
 CarpetX::xmin = -$xmax
 CarpetX::ymin = -$xmax
 CarpetX::zmin = -$xmax
@@ -82,12 +83,11 @@ CarpetX::dtfac = 0.25
 ODESolvers::verbose = no
 ODESolvers::method = "RK4"
 
-cocal_IDX::coc2cac_dir_path_ID = "/data/mrizzo7/coc2cac_IDs/MRNS/work_area_RNS_Mpa0.9_LCp1.7_LCf0.00_M1.25_SE3_df112"
-cocal_IDX::coc2cac_readpot = "True"
-cocal_IDX::coc2cac_rnstype = "MRNS_WL"
-cocal_IDX::coc2cac_readformat = "20.12"
-cocal_IDX::verbose = "False"
-cocal_IDX::coc2cac_set_asterx_avec = "True"
+COCAL_IDX::coc2cac_dir_path_ID = "/anvil/projects/x-mca99s008/coc2cac_IDs/mrns/work_area_RNS_Mpa0.9_LCp1.7_LCf0.00_M1.25_SE3_df112"
+COCAL_IDX::coc2cac_readpot = "True"
+COCAL_IDX::coc2cac_rnstype = "MRNS_WL"
+COCAL_IDX::coc2cac_readformat = "20.12"
+COCAL_IDX::verbose = "False"
 
 BoxInBox::num_regions = 1
 BoxInBox::shape_1 = "cube"
@@ -129,7 +129,7 @@ AsterX::use_uct = "yes"
 AsterX::vector_potential_gauge = "generalized Lorenz"
 AsterX::lorenz_damp_fac = 1.5/(0.25*((2*$xmax)/$ncells))
 AsterX::local_spatial_order = 4
-AsterX::update_tmunu = "no"
+AsterX::update_tmunu = "yes"
 AsterX::tmunu_interp_order = 4
 AsterX::local_estimate_error = "no"
 AsterX::recon_type = "z_vec"
@@ -183,40 +183,25 @@ VolumeIntegrals_vacuumX::Integration_quantity_keyword[1] = "ADM_Mass"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[2] = "ADM_Mass"
 VolumeIntegrals_vacuumX::volintegral_inside_sphere__radius[2] = 0.98*$xmax
 
-#SphericalSurface::nsurfaces = 5
-#SphericalSurface::verbose = no
-#SphericalSurface::name[0] = "r = 0.5 xmax"
-#SphericalSurface::name[1] = "r = 0.6 xmax"
-#SphericalSurface::name[2] = "r = 0.7 xmax"
-#SphericalSurface::name[3] = "r = 0.8 xmax"
-#SphericalSurface::name[4] = "r = 0.9 xmax"
-#SphericalSurface::maxntheta = 19
-#SphericalSurface::maxnphi = 40
-#SphericalSurface::auto_res = [ "no", "no", "no", "no", "no" ]
-#SphericalSurface::ntheta = [ 19, 19, 19, 19, 19 ]
-#SphericalSurface::nphi = [ 40, 40, 40, 40, 40 ]
-#SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes" ]
-#SphericalSurface::radius = [ 0.5*$xmax, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
-
-#QuasiLocalMeasures::verbose = no
-#QuasiLocalMeasures::veryverbose = no
-#QuasiLocalMeasures::interpolator_options = "order=3"
-#QuasiLocalMeasures::num_surfaces = SphericalSurface::nsurfaces
-#QuasiLocalMeasures::surface_index = [ 0, 1, 2, 3, 4 ]
-#QuasiLocalMeasures::surface_name = [ "r = 0.5 xmax", "r = 0.6 xmax", "r = 0.7 xmax", "r = 0.8 xmax", "r = 0.9 xmax" ]
-
 IO::out_dir = $parfile
 IO::out_every = $out_every
 IO::out_fileinfo = "axis labels"
 IO::parfile_write = no
+IO::checkpoint_dir = "checkpoints"
+IO::recover_dir = "checkpoints"
+IO::checkpoint_ID = no
+IO::checkpoint_every = 128000
+IO::checkpoint_every_walltime_hours = 0.9
+IO::checkpoint_on_terminate = yes
+IO::recover = "autoprobe"
 
 CarpetX::out_metadata = yes
+CarpetX::checkpoint_method = "openpmd"
+CarpetX::recover_method = "openpmd"
 CarpetX::out_norm_vars = "all"
 CarpetX::out_norm_omit_unstable = yes
 CarpetX::out_norm_omit_sumloc_for_backward_compatibility = yes
 
-# Keep old/full 3D TSV disabled. CarpetX still writes 1D x/y/z TSV
-# slices from out_tsv_vars below via the newer OutputTSV path.
 CarpetX::out_tsv = no
 CarpetX::out_tsv_every = $out_every
 CarpetX::out_tsv_vars = "

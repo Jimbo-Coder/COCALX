@@ -1,6 +1,6 @@
 # Configuration definitions for thorn Cocal
 
-REQUIRES Fortran
+REQUIRES Fortran Loop
 
 PROVIDES Cocal
 {

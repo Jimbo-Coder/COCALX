@@ -1,4 +1,4 @@
 # Main make.code.defn file for thorn Cocalrns2cac
 
 # Source files in this directory
-SRCS = coc2cac_ID_master_v1_dev2.F90 
+SRCS = carpetx_coordinates.cxx coc2cac_ID_master_v1_dev2.F90

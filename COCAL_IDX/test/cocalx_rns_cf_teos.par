@@ -10,13 +10,10 @@ Cactus::cctk_show_schedule = "no"
 
 ActiveThorns = "
   ADMBaseX
-  AsterMasks
-  AsterX
   CarpetX
   CoordinatesX
   HydroBaseX
   IOUtil
-  TmunuBaseX
   COCAL_IDX
 "
 
@@ -55,9 +52,6 @@ CarpetX::ghost_size = 3
 CarpetX::max_num_levels = 1
 CarpetX::regrid_every = 1280000
 CarpetX::dtfac = 0.5
-
-AsterX::zero_psi = "no"
-AsterX::update_tmunu = "no"
 
 COCAL_IDX::coc2cac_dir_path_ID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/rns_cf_teos"
 COCAL_IDX::coc2cac_rnstype = "RNS_CF"
