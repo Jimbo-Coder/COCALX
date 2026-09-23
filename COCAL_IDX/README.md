@@ -1,6 +1,28 @@
 # COCAL_IDX
 A cleaned up COCAL reader for the CarpetX EinsteinToolkit
 
+
+## BNS exported grids and velocity correction
+
+This branch ports the Carpet reader changes through `COCAL` commit `c83ca53`.
+Exported `bnsgrids_3D_mpt{1,2,3}.las` coordinates take precedence over grid
+reconstruction. Supply all three files, or none for legacy data. Each stellar
+patch uses its own surface grid and signed `xcm` orbital offset. Inconsistent
+metadata and Cartesian points outside the finite grid coverage are rejected.
+
+- `COCAL_IDX::coc2cac_bns_compact = yes` for a compactified outer export. The
+  infinity sample is read but excluded from interpolation. Default: `no`.
+- `COCAL_IDX::coc2cac_ecc_cor_velx` sets the velocity-correction coefficient.
+  Default: `0`; the default prescription is radial.
+- `COCAL_IDX::coc2cac_bns_xunit = yes` selects the xunit prescription: the
+  coefficient multiplies the signed half-separation in COCAL coordinates,
+  giving a constant x correction for each star. Negative coefficients give
+  inward corrections. Default: `no`.
+
+Use the prescription and coefficient from the ID generation settings; neither
+is inferred from the directory name. Existing CarpetX parameter names, field
+centerings, tile loops and per-rank loading are retained.
+
 1. Use the thornlist asterx_subcycle.th to checkout the ETK + CarpetX (subcycle) + cocal_IDX, 
 > ./GetComponents --root {dir} asterx_subcycle.th 
 

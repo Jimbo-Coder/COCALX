@@ -1,9 +1,10 @@
 subroutine interpo_gr2fl_export(grv,flv,rs)
-  use phys_constant, only : long
-  use grid_parameter, only : nrg, ntg, npg, nrf, ntf, npf
-  use coordinate_grav_r, only : rg
+
+use phys_constant, only : long
+use grid_parameter, only : nrg, ntg, npg, nrf, ntf, npf
+use coordinate_grav_r, only : rg!
 !  use def_matter, only : rs
-  implicit none
+implicit none
   real(long), external :: lagint_4th
   real(long), pointer :: grv(:,:,:), flv(:,:,:), rs(:,:)
   real(long) :: x(4), f(4)
@@ -16,7 +17,9 @@ subroutine interpo_gr2fl_export(grv,flv,rs)
     do itf = 0, ntf
       do irf = 0, nrf
         rrff = rs(itf,ipf)*rg(irf)
-        do irg = 0, nrg-1
+        if (rrff < rg(0) .or. rrff > rg(nrg)) error stop 'COCAL_IDX: fluid surface exceeds gravitational grid'
+        ir0 = nrg-3
+        do irg = 0, nrg
           if (rrff.le.rg(irg)) then 
             ir0 = min0(max0(0,irg-2),nrg-3)
             exit

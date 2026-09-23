@@ -1,12 +1,14 @@
 subroutine interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
-  use phys_constant, only : long, pi
-  use grid_parameter, only : nrf, ntg, npg
-  use coordinate_grav_extended
-  use def_matter, only : rs
-  use coordinate_grav_r, only : rg
-  use interface_modules_cartesian, ignore_me => interpo_fl2cgr_4th
-  use interface_interpo_lag4th_2Dsurf
-  implicit none
+
+use phys_constant, only : long, pi
+use grid_parameter, only : nrf, ntg, npg
+use coordinate_grav_extended
+use def_matter, only : rs
+
+use coordinate_grav_r, only : rg
+use interface_modules_cartesian, ignore_me => interpo_fl2cgr_4th
+use interface_interpo_lag4th_2Dsurf
+implicit none
   real(long), pointer     :: fnc(:,:,:)
   real(long), intent(out) :: cfn
   real(long) ::  rsca, rc_gr
@@ -26,7 +28,8 @@ subroutine interpo_fl2cgr_4th(fnc,cfn,xc,yc,zc)
   thc  = dmod(2.0d0*pi + datan2(varpic,zc),2.0d0*pi)
   phic = dmod(2.0d0*pi + datan2(    yc,xc),2.0d0*pi)
 !
-  call interpo_lag4th_2Dsurf(rsca,rs,thc,phic)
+  call interpo_lag4th_2Dsurf(rsca,rs,thc,phic,ntg,npg, &
+    thgex,phigex,itgex_th,ipgex_phi,ipgex_th)
   rc = rc_gr/rsca
 !  if (rc.gt.1.0d0) return
   if (rc.gt.rg(nrf)) return

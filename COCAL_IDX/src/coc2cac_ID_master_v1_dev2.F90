@@ -195,8 +195,8 @@ module cocal_data_bns
    integer, save        :: ierr=0
    real(8), save :: rr3, dis_cm
 
-   real(8), save :: ome_p1, ber_p1, radi_p1, r_surf_p1
-   real(8), save :: ome_p2, ber_p2, radi_p2, r_surf_p2
+   real(8), save :: ome_p1, ber_p1, radi_p1, r_surf_p1, xcm_p1
+   real(8), save :: ome_p2, ber_p2, radi_p2, r_surf_p2, xcm_p2
    real(8), save :: confpow_p1, confpow_p2
    integer, save :: nrg_p1,  ntg_p1, npg_p1, nrf_p1, ntf_p1, npf_p1
    integer, save :: nrg_p2,  ntg_p2, npg_p2, nrf_p2, ntf_p2, npf_p2
@@ -238,6 +238,7 @@ module cocal_data_bns
  end module cocal_data_bns
 
 subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
+  use, intrinsic :: ieee_arithmetic, only : ieee_is_finite
   use grid_parameter_binary_excision
   use phys_constant
   use grid_parameter, eps_cocal => eps
@@ -264,6 +265,10 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
   DECLARE_CCTK_PARAMETERS
 
   integer :: impt, igrid
+  logical :: exported_grids(nmpt)
+  character(1) :: patch
+  character(2) :: id_type_p2
+  real(8) :: radi_tol
   character(400) :: outstr
   real(8) :: gxx1, gxy1, gxz1, gyy1, gyz1, gzz1
   real(8) :: kxx1, kxy1, kxz1, kyy1, kyz1, kzz1
@@ -281,6 +286,9 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
       end if
 
       ierr = read_id_type(trim(dir_path)//"/rnspar_mpt1.dat",id_type)
+      ierr = read_id_type(trim(dir_path)//"/rnspar_mpt2.dat",id_type_p2)
+      if (id_type_p2 /= id_type) &
+         call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_IDX: both BNS patches must use the same CO/IR/SP data format.")
 
          ! -- Read ID type
       if (verbose == 1) then
@@ -292,16 +300,16 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
 
       !
       if (ierr.ne.0)     call CCTK_INFO("Problem reading file rnspar_mpt1.dat.")
-      if (verbose == 1) then 
-         select case (trim(id_type))
-         case ("CO")
-            call CCTK_INFO("Reading corotating BNS ID")
-         case ("IR")
-            call CCTK_INFO("Reading irrotational BNS ID")
-         case ("SP")
-            call CCTK_INFO("Reading spinning BNS ID")
-         end select
-      end if
+      select case (trim(id_type))
+      case ("CO")
+         if (verbose == 1) call CCTK_INFO("Reading corotating BNS ID")
+      case ("IR")
+         if (verbose == 1) call CCTK_INFO("Reading irrotational BNS ID")
+      case ("SP")
+         if (verbose == 1) call CCTK_INFO("Reading spinning BNS ID")
+      case default
+         call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_IDX: unsupported BNS fluid data type.")
+      end select
    !
    ! The coc2cac_ini_sub.F90 subroutine has here option for zero initial shift
    !
@@ -317,20 +325,29 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
          call CCTK_INFO("In coc2cac_ir: dir_path="//dir_path)
       end if 
    
+      do impt = 1, nmpt
+         write(patch,'(i1)') impt
+         inquire(file=trim(dir_path)//'/bnsgrids_3D_mpt'//patch//'.las',exist=exported_grids(impt))
+      end do
+      if (any(exported_grids) .and. .not. all(exported_grids)) &
+         call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_IDX: supply exported grids for all three BNS patches, or none for legacy data.")
+
    !--------------------- Choose gravitational grid -----------------------
    !igrid3  igrid = 3     ! 3:r_surf is used
-      igrid = 4     ! 4:r_surf=1.0
+      igrid = 4     ! Legacy fallback only; exported grids take precedence.
    !-----------------------------------------------------------------------
 
        ! -- Read parameters
       call allocate_grid_parameter_mpt
       call allocate_grid_parameter_binary_excision_mpt
       call allocate_def_matter_parameter_mpt
+      radi_tol = 1.0d-12
       do impt = 1, nmpt
          if (verbose == 1) then
             call CCTK_INFO("read_parameter_mpt_cactus")
          end if
          call read_parameter_mpt_cactus(impt,dir_path)
+         if (impt <= 2) radi_tol = max(radi_tol,abs(eps_cocal))
          indata_type = '3D'
          if (verbose ==1) then
             call CCTK_INFO("read_surf_parameter_mpt_cactus")
@@ -370,7 +387,8 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
          else
             call copy_def_peos_parameter_from_mpt(impt)
          end if
-         call coordinate_patch_kit_grav_grid_coc2cac_mpt(igrid)  ! 3:r_surf is used
+         call coordinate_patch_kit_grav_grid_coc2cac_mpt(igrid,impt,dir_path, &
+            coc2cac_readformatf,coc2cac_bns_compact == 1 .and. impt == nmpt)
          call calc_parameter_binary_excision
          call copy_grid_parameter_to_mpt(impt)
          call copy_grid_parameter_binary_excision_to_mpt(impt)
@@ -474,11 +492,11 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
             call IO_input_CF_grav_export(trim(dir_path)//"/bnsgra_3D_mpt1.las",coc2cac_readformatf,psi_p1,alph_p1,bvxd_p1,bvyd_p1,bvzd_p1)
             select case (trim(id_type))
                case("CO")
-                  call IO_input_CF_flco_export(trim(dir_path)//"/bnsflu_3D_mpt1.las",coc2cac_readformatf,emd_p1,ome_p1,ber_p1,radi_p1)
+                  call IO_input_CF_flco_export(trim(dir_path)//"/bnsflu_3D_mpt1.las",coc2cac_readformatf,emd_p1,ome_p1,ber_p1,radi_p1,xcm_p1)
                case("IR")
-                  call IO_input_CF_flir_export(trim(dir_path)//"/bnsflu_3D_mpt1.las",coc2cac_readformatf,emd_p1,vep_p1,ome_p1,ber_p1,radi_p1) ! This line changes for IR/CO/SP
+                  call IO_input_CF_flir_export(trim(dir_path)//"/bnsflu_3D_mpt1.las",coc2cac_readformatf,emd_p1,vep_p1,ome_p1,ber_p1,radi_p1,xcm_p1) ! This line changes for IR/CO/SP
                case("SP")
-                  call IO_input_CF_flsp_export(trim(dir_path)//"/bnsflu_3D_mpt1.las",coc2cac_readformatf,emd_p1,vep_p1,wxspf_p1,wyspf_p1,wzspf_p1,ome_p1,ber_p1,radi_p1,confpow_p1)
+                  call IO_input_CF_flsp_export(trim(dir_path)//"/bnsflu_3D_mpt1.las",coc2cac_readformatf,emd_p1,vep_p1,wxspf_p1,wyspf_p1,wzspf_p1,ome_p1,ber_p1,radi_p1,confpow_p1,xcm_p1)
             end select
                   
       
@@ -500,6 +518,11 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
       
          end if
          if (impt==2) then
+            if (abs(dis-dis_cm) > 1.0d-8*max(1.0d0,abs(dis_cm))) then
+               write(outstr,'(a,es20.12,a,es20.12)') &
+                  'COCAL_IDX: BNS patches disagree on the distance from their shared midpoint: mpt1=', dis_cm, '; mpt2=', dis
+               call CCTK_WARN(CCTK_WARN_ABORT, trim(outstr))
+            end if
             if (verbose == 1) then
                call CCTK_INFO("Allocating star2...")
             end if
@@ -570,11 +593,11 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
       
             select case (trim(id_type))
             case("CO")
-               call IO_input_CF_flco_export(trim(dir_path)//"/bnsflu_3D_mpt2.las",coc2cac_readformatf,emd_p2,ome_p2,ber_p2,radi_p2)
+               call IO_input_CF_flco_export(trim(dir_path)//"/bnsflu_3D_mpt2.las",coc2cac_readformatf,emd_p2,ome_p2,ber_p2,radi_p2,xcm_p2)
             case("IR")
-               call IO_input_CF_flir_export(trim(dir_path)//"/bnsflu_3D_mpt2.las",coc2cac_readformatf,emd_p2,vep_p2,ome_p2,ber_p2,radi_p2) ! This line changes for IR/CO/SP
+               call IO_input_CF_flir_export(trim(dir_path)//"/bnsflu_3D_mpt2.las",coc2cac_readformatf,emd_p2,vep_p2,ome_p2,ber_p2,radi_p2,xcm_p2) ! This line changes for IR/CO/SP
             case("SP")
-               call IO_input_CF_flsp_export(trim(dir_path)//"/bnsflu_3D_mpt2.las",coc2cac_readformatf,emd_p2,vep_p2,wxspf_p2,wyspf_p2,wzspf_p2,ome_p2,ber_p2,radi_p2,confpow_p2)
+               call IO_input_CF_flsp_export(trim(dir_path)//"/bnsflu_3D_mpt2.las",coc2cac_readformatf,emd_p2,vep_p2,wxspf_p2,wyspf_p2,wzspf_p2,ome_p2,ber_p2,radi_p2,confpow_p2,xcm_p2)
             end select
       
             call IO_input_CF_surf_export(trim(dir_path)//"/bnssur_3D_mpt2.las",coc2cac_readformatf,rs_p2)
@@ -608,6 +631,8 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
          end if
          if (impt==3) then
             nrg_p3=nrg;  ntg_p3=ntg;  npg_p3=npg;  nrf_p3=nrf;  ntf_p3=ntf;  npf_p3=npf
+            ! Consume the full exported arrays, but never interpolate the infinity sample.
+            if (coc2cac_bns_compact == 1) nrg_p3 = nrg - 1
             allocate (       rg_p3( 0:nnrg))
             allocate (     rgex_p3(-2:nnrg+2))
             allocate (    thgex_p3(-2:nntg+2))
@@ -650,6 +675,21 @@ subroutine coc2cac_read_bns_data(CCTK_ARGUMENTS)
       
          end if
       end do
+      if (.not. all(ieee_is_finite([radi_p1,radi_p2,ome_p1,ome_p2,ber_p1,ber_p2,xcm_p1,xcm_p2]))) &
+         call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_IDX: non-finite BNS fluid constants.")
+      if (min(radi_p1,radi_p2) <= 0.0d0) &
+         call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_IDX: BNS radi must be positive.")
+      ! radi is a shared length unit, not the individual stellar radius. Allow iteration/print noise.
+      if (abs(radi_p1-radi_p2) > radi_tol*max(radi_p1,radi_p2)) &
+         call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_IDX: unequal radi normalizations are not supported by this BNS coordinate map.")
+      if (verbose == 1) then
+         write(outstr,'(a,2e20.12)') 'BNS central enthalpies: ', emd_p1(0,0,0), emd_p2(0,0,0)
+         call CCTK_INFO(trim(outstr))
+         write(outstr,'(a,4e20.12)') 'BNS p1 ome, ber, radi, xcm: ', ome_p1, ber_p1, radi_p1, xcm_p1
+         call CCTK_INFO(trim(outstr))
+         write(outstr,'(a,4e20.12)') 'BNS p2 ome, ber, radi, xcm: ', ome_p2, ber_p2, radi_p2, xcm_p2
+         call CCTK_INFO(trim(outstr))
+      end if
       have_read_data = .true.
       if (verbose == 1) then
          call CCTK_INFO("Done reading COCAL BNS data for this MPI rank.")
@@ -1634,6 +1674,7 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
    integer :: i, j, k, imin, imax, jmin, jmax, kmin, kmax
 
    logical ::  bool_lapse, bool_shift, bool_hydro
+   logical :: found_outside_bns_grid
    
     
    real(8) :: huta, alphfca2  !unique to IR, SP has this + more
@@ -1700,19 +1741,12 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
       call CCTK_ERROR("COCAL_IDX::coc2cac_bns called before coc2cac_read_bns_data completed. Refusing fallback per-level read.")
    end if
 
+   found_outside_bns_grid = .false.
    allocate(carpetx_coords(3,cctk_ash(1),cctk_ash(2),cctk_ash(3)))
    do cent = 1,5
       call COCAL_IDX_FillCoordinates(cctkGH, centering(1,cent), centering(2,cent), &
           centering(3,cent), cctk_ash(1), cctk_ash(2), cctk_ash(3), carpetx_coords)
    if (verbose == 1) then
-      write(outstr,'(2e20.12)') emd_p1(0,0,0), emd_p1(58,0,0)
-      call CCTK_INFO("First and Last emd_p1:"//outstr)
-      write(outstr,'(3e20.12)') ome_p1, ber_p1, radi_p1
-      call CCTK_INFO("ome_p1, ber_p1, radi_p1:"//outstr)
-      write(outstr,'(e20.12)') dis_cm
-      call CCTK_INFO("Distance between stars: "//outstr)
- !
-      call CCTK_INFO("Internal reading info (END).")
       call CCTK_INFO("Looping over local cartesian grid:")
    end if
  
@@ -1780,6 +1814,10 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
            axx=0.0d0  ; axy=0.0d0   ; axz=0.0d0   ; ayy=0.0d0   ; ayz=0.0d0   ; azz=0.0d0
        !
            rc_p3     = dsqrt(dabs(xc_p3**2 + yc_p3**2 + zc_p3**2))
+           if (rc_p3 < rg_p3(0) .or. rc_p3 > rg_p3(nrg_p3)) then
+             found_outside_bns_grid = .true.
+             cycle
+           end if
            varpic_p3 = dsqrt(dabs(xc_p3**2 + yc_p3**2))
            thc_p3  = dmod(2.0d0*pi + datan2(varpic_p3,zc_p3),2.0d0*pi)
            phic_p3 = dmod(2.0d0*pi + datan2(    yc_p3,xc_p3),2.0d0*pi)
@@ -1891,6 +1929,10 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
              axx=0.0d0  ; axy=0.0d0   ; axz=0.0d0   ; ayy=0.0d0   ; ayz=0.0d0   ; azz=0.0d0
        !
              rc_p1     = dsqrt(dabs(xc_p1**2 + yc_p1**2 + zc_p1**2))
+             if (rc_p1 < rg_p1(0) .or. rc_p1 > rg_p1(nrg_p1)) then
+               found_outside_bns_grid = .true.
+               cycle
+             end if
              varpic_p1 = dsqrt(dabs(xc_p1**2 + yc_p1**2))
              thc_p1  = dmod(2.0d0*pi + datan2(varpic_p1,zc_p1),2.0d0*pi)
              phic_p1 = dmod(2.0d0*pi + datan2(    yc_p1,xc_p1),2.0d0*pi)
@@ -1979,7 +2021,8 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
              psi4ca = psica**4
        !      write(6,*) axx,axy,axz,ayy,ayz,azz
  
-             call interpo_lag4th_2Dsurf(rsca_p1,rs_p1,thc_p1,phic_p1)
+             call interpo_lag4th_2Dsurf(rsca_p1,rs_p1,thc_p1,phic_p1,ntg_p1,npg_p1, &
+               thgex_p1,phigex_p1,itgex_th_p1,ipgex_phi_p1,ipgex_th_p1)
              rcf_p1 = rc_p1/rsca_p1
        !
              if (rcf_p1.le.rg_p1(nrf_p1)) then
@@ -2097,9 +2140,17 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
                end select
             
  
-               bxcor   = bvxdfca + ome_p1*(-ycoc)
-               bycor   = bvydfca + ome_p1*(xcoc)
-               bzcor   = bvzdfca
+               bxcor = bvxdfca + ome_p1*(-ycoc)
+               bycor = bvydfca + ome_p1*(xcoc-xcm_p1)
+               bzcor = bvzdfca
+               if (coc2cac_bns_xunit == 1) then
+                 ! Patch 1 is at x=-dis_cm in the Cartesian frame.
+                 bxcor = bxcor - coc2cac_ecc_cor_velx * dis_cm
+               else
+                 bxcor = bxcor + coc2cac_ecc_cor_velx * (xcoc-xcm_p1)
+                 bycor = bycor + coc2cac_ecc_cor_velx * ycoc
+                 bzcor = bzcor + coc2cac_ecc_cor_velx * zcoc
+               end if
                
 
                select case (trim(id_type))
@@ -2153,6 +2204,10 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
              axx=0.0d0  ; axy=0.0d0   ; axz=0.0d0   ; ayy=0.0d0   ; ayz=0.0d0   ; azz=0.0d0
        !
              rc_p2     = dsqrt(dabs(xc_p2**2 + yc_p2**2 + zc_p2**2))
+             if (rc_p2 < rg_p2(0) .or. rc_p2 > rg_p2(nrg_p2)) then
+               found_outside_bns_grid = .true.
+               cycle
+             end if
              varpic_p2 = dsqrt(dabs(xc_p2**2 + yc_p2**2))
              thc_p2  = dmod(2.0d0*pi + datan2(varpic_p2,zc_p2),2.0d0*pi)
              phic_p2 = dmod(2.0d0*pi + datan2(    yc_p2,xc_p2),2.0d0*pi)
@@ -2237,7 +2292,8 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
              azz    = lagint_4th_apply(wphi4,fp4azz )
  
              psi4ca = psica**4
-             call interpo_lag4th_2Dsurf(rsca_p2,rs_p2,thc_p2,phic_p2)
+             call interpo_lag4th_2Dsurf(rsca_p2,rs_p2,thc_p2,phic_p2,ntg_p2,npg_p2, &
+               thgex_p2,phigex_p2,itgex_th_p2,ipgex_phi_p2,ipgex_th_p2)
              rcf_p2 = rc_p2/rsca_p2
        !
              if (rcf_p2.le.rg_p2(nrf_p2)) then
@@ -2351,9 +2407,17 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
                end select
             
  
-               bxcor   = bvxdfca + ome_p2*(-ycoc)
-               bycor   = bvydfca + ome_p2*(xcoc)
-               bzcor   = bvzdfca
+               ! Patch 2's x/y axes are reversed relative to the Cartesian frame.
+               bxcor = bvxdfca + ome_p2*(-ycoc)
+               bycor = bvydfca + ome_p2*(xcoc+xcm_p2)
+               bzcor = bvzdfca
+               if (coc2cac_bns_xunit == 1) then
+                 bxcor = bxcor + coc2cac_ecc_cor_velx * dis_cm
+               else
+                 bxcor = bxcor + coc2cac_ecc_cor_velx * (xcoc+xcm_p2)
+                 bycor = bycor + coc2cac_ecc_cor_velx * ycoc
+                 bzcor = bzcor + coc2cac_ecc_cor_velx * zcoc
+               end if
                
        !
               select case (trim(id_type))
@@ -2550,4 +2614,6 @@ SUBROUTINE coc2cac_bns(cctkGH, cctk_lsh, cctk_ash, cctk_tile_min, cctk_tile_max,
    end if
 end do
 deallocate(carpetx_coords)
+if (found_outside_bns_grid) &
+   call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_IDX: Cartesian grid exceeds the finite BNS patch coverage; extrapolation is not supported.")
  END SUBROUTINE coc2cac_bns

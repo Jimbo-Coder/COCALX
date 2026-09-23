@@ -69,6 +69,19 @@ CCTK_BOOLEAN coc2cac_read_tabulated_eos "Read tabulated EOS data when converting
 {
 } "False"
 
+CCTK_BOOLEAN coc2cac_bns_compact "The exported outer BNS grid is compactified, with its last point at infinity"
+{
+} "False"
+
+CCTK_REAL coc2cac_ecc_cor_velx "BNS radial or xunit velocity-correction coefficient"
+{
+  *:* :: ""
+} 0.0
+
+CCTK_BOOLEAN coc2cac_bns_xunit "Use the BNS xunit velocity prescription instead of radial expansion"
+{
+} "False"
+
 CCTK_REAL coc2cac_cen_x1 "X Position of BNS star 1 for grid centers and diagnostics"
 {
   *:* :: ""
