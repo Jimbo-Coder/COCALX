@@ -1,5 +1,6 @@
 # Hypatia CarpetX/AsterX development thornlist
 # ET_2026_05 base components plus the active development repositories.
+# For existing local checkouts, set the relevant repository's !TYPE to ignore.
 
 !CRL_VERSION = 1.0
 !DEFINE ROOT = CactusX
@@ -168,9 +169,11 @@ Numerical/AEILocalInterp
 
 
 # Liwei Ji CarpetX subcycling development checkout
-# Standalone repo: CarpetX_lwji, branch dev tracking liwei/dev
 !TARGET = $ARR
-!TYPE = ignore
+!TYPE = git
+!URL = https://github.com/lwJi/CarpetX.git
+!REPO_BRANCH = dev
+!REPO_PATH = $2
 !CHECKOUT =
 CarpetX/ADMBaseX
 CarpetX/Algo
@@ -184,7 +187,6 @@ CarpetX/ErrorEstimator
 CarpetX/HydroBaseX
 CarpetX/Loop
 CarpetX/ODESolvers
-CarpetX/Subcycling
 CarpetX/TestArrayGroup
 CarpetX/TestInterpolate
 CarpetX/TestNorms
@@ -215,9 +217,11 @@ SpacetimeX_qlm/Z4c
 
 
 # Upstream AsterX development checkout
-# Standalone repo: AsterX_dev, branch dev tracking origin/dev
 !TARGET = $ARR
-!TYPE = ignore
+!TYPE = git
+!URL = https://github.com/EinsteinToolkit/AsterX.git
+!REPO_BRANCH = dev
+!REPO_PATH = $2
 !CHECKOUT =
 AsterX/AsterSeeds
 AsterX/AsterUtils
@@ -248,16 +252,16 @@ AsterX/AsterAnalysis
 !TYPE     = git
 !URL      = https://github.com/jaykalinani/BNSTools.git
 !REPO_BRANCH = main
-!REPO_PATH = $1
+!REPO_PATH = $2
 !CHECKOUT =
 BNSTools/MHD_Diagnostics
 BNSTools/VolumeIntegrals_GRMHDX
 BNSTools/VolumeIntegrals_vacuumX
 #BNSTools/Outflow
 
-# COCAL_IDX: use a local checkout, or set !TYPE to git to fetch main.
+# COCAL_IDX; select another branch explicitly when needed.
 !TARGET = $ARR
-!TYPE   = ignore
+!TYPE   = git
 !URL = https://github.com/Jimbo-Coder/COCALX.git
 !REPO_BRANCH = main
 !REPO_PATH = $2

@@ -28,7 +28,6 @@ ActiveThorns = "
   NewRadX
   ODESolvers
   ReconX
-  Subcycling
   TimerReport
   TmunuBaseX
   VolumeIntegrals_GRMHDX
