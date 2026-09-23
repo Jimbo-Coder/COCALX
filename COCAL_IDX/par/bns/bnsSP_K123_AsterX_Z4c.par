@@ -1,16 +1,17 @@
-# CarpetX + AsterX + Z4c: BNS
-# Semiproduction grid; make temporary reduced copies for local smoke tests.
+# CarpetX + AsterX + Z4c: SP_K123.6_000 BNS
+# Same semiproduction domain and refinement as the Carpet equal-mass baseline.
+# Lengths use G = c = M_sun = 1. For another ID, update the EOS, centers,
+# stellar boxes and diagnostic radii together. Use reduced copies for local tests.
 
-$itlast = 1000000000
-$final_time = 1.0e9
-$xmin = -128.0
-$xmax = +128.0
-$ncells = 64
-$nlevels = 5
+$itlast = 100000000
+$final_time = 1000.0
+$xmax = 1536.0
+$ncells = 192     # base dx = 16; finest dx = 0.125 with eight levels
+$nlevels = 8
 $error_threshold = 0.9
 $dtfac = 0.3
-$out_every = 64    # diagnostics, reductions, norms, TSV slices
-$out_every3d = 2048 # heavy grid/openPMD output
+$out_every = 128   # tracking, regridding and QLM: multiple of 2**($nlevels - 1)
+$out_every3d = 8192 # heavy grid/openPMD output
 
 # Active thorns
 ActiveThorns = "
@@ -30,31 +31,32 @@ ActiveThorns = "
   IOUtil
   NewRadX
   ODESolvers
+  QuasiLocalMeasures
   ReconX
+  SphericalSurface
   Subcycling
+  TGRtensor
   TimerReport
   TmunuBaseX
   VolumeIntegrals_GRMHDX
   VolumeIntegrals_vacuumX
   Z4c
-  QuasiLocalMeasures
-  SphericalSurface
-  TGRtensor
 "
 
 # Initial data
-COCAL_IDX::coc2cac_dir_path_ID = "/anvil/projects/x-mca99s008/coc2cac_IDs/bns/SP_K123.6_000"
+# Set this to the directory containing the SP_K123.6_000 ID files.
+COCAL_IDX::coc2cac_dir_path_ID = "/path/to/SP_K123.6_000"
 COCAL_IDX::coc2cac_readpot = "False"
 
-COCAL_IDX::coc2cac_cen_x1 =  -2.403360820948883E+01
-COCAL_IDX::coc2cac_cen_x2 =  2.403360820948883E+01
+COCAL_IDX::coc2cac_cen_x1 = -24.0336082094883
+COCAL_IDX::coc2cac_cen_x2 =  24.0336082094883
 
 COCAL_IDX::coc2cac_readformat = "20.12"
 
 # Runtime
 Cactus::cctk_show_schedule = no
 Cactus::presync_mode = "mixed-error"
-Cactus::terminate = "iteration"
+Cactus::terminate = "either"
 Cactus::cctk_itlast = $itlast
 Cactus::cctk_final_time = $final_time
 
@@ -62,9 +64,9 @@ Cactus::cctk_final_time = $final_time
 CarpetX::verbose = no
 CarpetX::poison_undefined_values = no
 
-CarpetX::xmin = $xmin
-CarpetX::ymin = $xmin
-CarpetX::zmin = $xmin
+CarpetX::xmin = -$xmax
+CarpetX::ymin = -$xmax
+CarpetX::zmin = -$xmax
 
 CarpetX::xmax = $xmax
 CarpetX::ymax = $xmax
@@ -96,7 +98,7 @@ CarpetX::boundary_upper_z = "neumann"
 CarpetX::ghost_size = 3
 
 CarpetX::max_num_levels = $nlevels
-CarpetX::regrid_every = 8
+CarpetX::regrid_every = $out_every
 CarpetX::regrid_error_threshold = $error_threshold
 CarpetX::out_performance_every = $out_every
 
@@ -105,23 +107,23 @@ CarpetX::refine_grid_layout = no
 CarpetX::use_subcycling = yes
 CarpetX::restrict_during_sync = no
 
-# Fixed refinement regions
+# Common outer hierarchy and two CoM-tracked stellar hierarchies.
 BoxInBox::num_regions = 3
 
 BoxInBox::shape_1 = "cube"
-BoxInBox::num_levels_1 = 3
+BoxInBox::num_levels_1 = 7
 BoxInBox::position_x_1 = 0.0
-BoxInBox::radius_1 = [-1, 96, 48]
+BoxInBox::radius_1 = [-1, 768, 384, 192, 96, 48, 24]
 
 BoxInBox::shape_2 = "cube"
-BoxInBox::num_levels_2 = 5
+BoxInBox::num_levels_2 = $nlevels
 BoxInBox::position_x_2 = COCAL_IDX::coc2cac_cen_x1
-BoxInBox::radius_2 = [-1, 64, 32, 20, 14]
+BoxInBox::radius_2 = [-1, 768, 384, 192, 96, 48, 24, 13.25]
 
 BoxInBox::shape_3 = "cube"
-BoxInBox::num_levels_3 = 5
+BoxInBox::num_levels_3 = $nlevels
 BoxInBox::position_x_3 = COCAL_IDX::coc2cac_cen_x2
-BoxInBox::radius_3 = [-1, 64, 32, 20, 14]
+BoxInBox::radius_3 = [-1, 768, 384, 192, 96, 48, 24, 13.25]
 
 CarpetX::prolongation_type = "poly-cons3lfb"
 CarpetX::prolongation_order = 5
@@ -144,8 +146,8 @@ Z4c::kappa2 = 0.0
 Z4c::f_mu_L = 2.0
 Z4c::f_mu_S = 1.0
 Z4c::eta = 0.3
-Z4c::calc_ADM_vars = yes                  # for Weyl
-Z4c::calc_ADMRHS_vars = no               # for Weyl
+Z4c::calc_ADM_vars = yes
+Z4c::calc_ADMRHS_vars = no
 Z4c::calc_constraints = yes
 Z4c::chi_floor = 1.0e-6
 Z4c::alphaG_floor = 1.0e-8
@@ -155,6 +157,7 @@ Z4c::boundary_conditions = "NewRadX"
 AsterAnalysis::compute_MHD = "yes"
 AsterAnalysis::compute_MHD_spherical = "no"
 
+# Unmagnetized initial state; no delayed seeding during evolution.
 AsterSeeds::set_Ye_postinitial = "yes"
 AsterSeeds::set_temperature_postinitial = "yes"
 AsterSeeds::set_entropy_postinitial = "yes"
@@ -168,16 +171,13 @@ AsterSeeds::Avec_kappa = 2.0
 AsterSeeds::dipole_x = [COCAL_IDX::coc2cac_cen_x1, COCAL_IDX::coc2cac_cen_x2]
 AsterSeeds::initial_beta = "no"
 AsterSeeds::set_coorbiting_vel = "no"
-AsterSeeds::use_separation = "yes"
-AsterSeeds::use_time = "no"
-AsterSeeds::seeding_separation = 5.0
-AsterSeeds::seed_every = $out_every
+AsterSeeds::seed_every = 0
 
 AsterX::debug_mode = "no"
 AsterX::flux_type = "HLLE"
 AsterX::use_uct = "yes"
 AsterX::vector_potential_gauge = "generalized Lorenz"
-AsterX::lorenz_damp_fac = 1.5/($dtfac* ((2 * $xmax)/$ncells)) #0.625 #0.535714285714286 #1.07142857142857
+AsterX::lorenz_damp_fac = 1.5 / ($dtfac * (2 * $xmax / $ncells))
 AsterX::local_spatial_order = 4
 AsterX::update_tmunu = "yes"
 AsterX::tmunu_interp_order = 4
@@ -189,6 +189,15 @@ ReconX::reconstruction_method = "ppm"
 ReconX::ppm_zone_flattening = "yes"
 ReconX::ppm_shock_detection = "no"
 
+# Gamma=2 EOS for this ID; replace this block for a different EOS such as SLy.
+EOSX::evolution_eos = "IdealGas"
+EOSX::gl_gamma = 2.0
+EOSX::poly_gamma = 2.0
+EOSX::poly_k = 123.6003245405175
+EOSX::rho_max = 1e8
+EOSX::eps_max = 1e8
+EOSX::eps_min = 1e-12
+
 Con2PrimFactory::unit_test = "no"
 Con2PrimFactory::c2p_prime = "Noble"
 Con2PrimFactory::c2p_second = "Palenzuela"
@@ -199,18 +208,12 @@ Con2PrimFactory::vw_lim = 1e8
 Con2PrimFactory::Ye_lenient = "yes"
 Con2PrimFactory::use_temperature = "no"
 Con2PrimFactory::thermal_eos_atmo = "no"
-Con2PrimFactory::rho_abs_min = 1e-9
+Con2PrimFactory::rho_abs_min = 1e-12
+# Cold Gamma=2 atmosphere: rho * epsilon = K * rho**2.
+Con2PrimFactory::tauFluid_atmo = EOSX::poly_k * Con2PrimFactory::rho_abs_min**2
 Con2PrimFactory::atmo_tol = 1e-3
 Con2PrimFactory::t_atmo = 9.9770006382257168e-03
 Con2PrimFactory::Ye_atmo = 0.5
-
-EOSX::evolution_eos = "IdealGas"
-EOSX::gl_gamma = 2.0
-EOSX::poly_gamma = 2.0
-EOSX::poly_k = 123.6
-EOSX::rho_max = 1e8
-EOSX::eps_max = 1e8
-EOSX::eps_min = 1.236e-09
 
 # Output and recovery
 IO::out_dir = $parfile
@@ -246,6 +249,7 @@ CarpetX::out_tsv = no
 CarpetX::out_tsv_every = $out_every
 CarpetX::out_tsv_vars = "
     QuasiLocalMeasures::qlm_scalars
+    QuasiLocalMeasures::qlm_state
     HydroBaseX::rho
     HydroBaseX::press
     HydroBaseX::vel
@@ -263,7 +267,7 @@ CarpetX::out_openpmd_every = $out_every3d
 VolumeIntegrals_GRMHDX::outVolIntegral_dir = "volume_integration"
 VolumeIntegrals_GRMHDX::set_origin_with_VIX = yes
 VolumeIntegrals_GRMHDX::VolIntegral_out_every = $out_every
-VolumeIntegrals_GRMHDX::verbose = 1
+VolumeIntegrals_GRMHDX::verbose = 0
 VolumeIntegrals_GRMHDX::enable_file_output = 1
 
 # Volume diagnostics
@@ -272,12 +276,12 @@ VolumeIntegrals_GRMHDX::NumIntegrals = 4
 # Full-domain CoM used as the global diagnostic origin.
 VolumeIntegrals_GRMHDX::Integration_quantity_keyword[1] = "centerofmass"
 
-# Individual star CoMs drive AMR centers, extraction surfaces, and AsterSeeds.
+# Individual star CoMs drive AMR centers and the two stellar extraction spheres.
 VolumeIntegrals_GRMHDX::Integration_quantity_keyword[2] = "centerofmass"
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_x_initial[2] = COCAL_IDX::coc2cac_cen_x1
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_y_initial[2] = 0.
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_z_initial[2] = 0.
-VolumeIntegrals_GRMHDX::volintegral_inside_sphere__radius[2]   = 9
+VolumeIntegrals_GRMHDX::volintegral_inside_sphere__radius[2]   = 14.25
 VolumeIntegrals_GRMHDX::volintegral_sphere__tracks__amr_centre[2] = 1
 VolumeIntegrals_GRMHDX::amr_centre__tracks__volintegral_inside_sphere[2] = 1
 VolumeIntegrals_GRMHDX::sphericalsurface__tracks__volintegral_inside_sphere[2] = 0
@@ -286,7 +290,7 @@ VolumeIntegrals_GRMHDX::Integration_quantity_keyword[3] = "centerofmass"
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_x_initial[3] = COCAL_IDX::coc2cac_cen_x2
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_y_initial[3] = 0.
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_z_initial[3] = 0.
-VolumeIntegrals_GRMHDX::volintegral_inside_sphere__radius[3]   = 9
+VolumeIntegrals_GRMHDX::volintegral_inside_sphere__radius[3]   = 14.25
 VolumeIntegrals_GRMHDX::volintegral_sphere__tracks__amr_centre[3] = 2
 VolumeIntegrals_GRMHDX::amr_centre__tracks__volintegral_inside_sphere[3] = 2
 VolumeIntegrals_GRMHDX::sphericalsurface__tracks__volintegral_inside_sphere[3] = 1
@@ -297,43 +301,49 @@ VolumeIntegrals_vacuumX::HamiltonianVarString  = "Z4c::HC"
 VolumeIntegrals_vacuumX::Momentum0VarString    = "Z4c::MtCx"
 VolumeIntegrals_vacuumX::Momentum1VarString    = "Z4c::MtCy"
 VolumeIntegrals_vacuumX::Momentum2VarString    = "Z4c::MtCz"
-VolumeIntegrals_vacuumX::verbose = 1
+VolumeIntegrals_vacuumX::verbose = 0
 VolumeIntegrals_vacuumX::enable_file_output    = 1
 
 VolumeIntegrals_vacuumX::outVolIntegral_dir    = "volume_integration"
 VolumeIntegrals_vacuumX::VolIntegral_out_every = $out_every
-VolumeIntegrals_vacuumX::NumIntegrals          = 6
+VolumeIntegrals_vacuumX::NumIntegrals          = 7
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[1] = "H_M_CnstraintsL2"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[2] = "H_M2_CnstraintsL2"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[3] = "ADM_Mass"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[4] = "ADM_Momentum"
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[5] = "ADM_Angular_Momentum"
+# Finite-radius M and J match the innermost global QLM sphere.
 VolumeIntegrals_vacuumX::Integration_quantity_keyword[6] = "ADM_Mass"
-VolumeIntegrals_vacuumX::volintegral_inside_sphere__radius[6] = 0.98*$xmax
+VolumeIntegrals_vacuumX::volintegral_inside_sphere__radius[6] = 0.6*$xmax
+VolumeIntegrals_vacuumX::Integration_quantity_keyword[7] = "ADM_Angular_Momentum"
+VolumeIntegrals_vacuumX::volintegral_inside_sphere__radius[7] = 0.6*$xmax
 
-# Surface diagnostics
-SphericalSurface::nsurfaces = 7
+# Two CoM-tracked extraction spheres, then four fixed global ADM spheres.
+# These have prescribed radii; they do not trace a density contour.
+SphericalSurface::nsurfaces = 6
 SphericalSurface::name[0] = "LHS BNS"
 SphericalSurface::name[1] = "RHS BNS"
-SphericalSurface::name[2] = "r = 0.5 xmax"
-SphericalSurface::name[3] = "r = 0.6 xmax"
-SphericalSurface::name[4] = "r = 0.7 xmax"
-SphericalSurface::name[5] = "r = 0.8 xmax"
-SphericalSurface::name[6] = "r = 0.9 xmax"
+SphericalSurface::name[2] = "r = 0.6 xmax"
+SphericalSurface::name[3] = "r = 0.7 xmax"
+SphericalSurface::name[4] = "r = 0.8 xmax"
+SphericalSurface::name[5] = "r = 0.9 xmax"
 
-SphericalSurface::maxntheta = 19
-SphericalSurface::maxnphi = 40
+SphericalSurface::maxntheta = 39
+SphericalSurface::maxnphi = 76
 
-SphericalSurface::auto_res = [ "no", "no", "no", "no", "no", "no", "no" ]
-SphericalSurface::ntheta = [ 19, 19, 19, 19, 19, 19, 19 ]
-SphericalSurface::nphi = [ 40, 40, 40, 40, 40, 40, 40 ]
+SphericalSurface::auto_res = [ "no", "no", "no", "no", "no", "no" ]
+SphericalSurface::ntheta = [ 39, 39, 39, 39, 39, 39 ]
+SphericalSurface::nphi = [ 76, 76, 76, 76, 76, 76 ]
 
-SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes", "yes", "yes" ]
-SphericalSurface::radius = [ 10.5, 10.5, 0.5*$xmax, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
-SphericalSurface::origin_x = [ COCAL_IDX::coc2cac_cen_x1, COCAL_IDX::coc2cac_cen_x2, 0.0, 0.0, 0.0, 0.0, 0.0 ]
+SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes", "yes" ]
+SphericalSurface::radius = [ 10.6478011054695, 10.6478011054695, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
+SphericalSurface::origin_x = [ COCAL_IDX::coc2cac_cen_x1, COCAL_IDX::coc2cac_cen_x2, 0.0, 0.0, 0.0, 0.0 ]
 
 QuasiLocalMeasures::verbose = no
+QuasiLocalMeasures::interpolator = "CarpetX"
 QuasiLocalMeasures::interpolator_options = "order=3"
+QuasiLocalMeasures::spatial_order = 4
+QuasiLocalMeasures::calculate_every = $out_every
 QuasiLocalMeasures::num_surfaces = SphericalSurface::nsurfaces
-QuasiLocalMeasures::surface_index = [ 0, 1, 2, 3, 4, 5, 6 ]
-QuasiLocalMeasures::surface_name = [ "LHS BNS", "RHS BNS", "r = 0.5 xmax", "r = 0.6 xmax", "r = 0.7 xmax", "r = 0.8 xmax", "r = 0.9 xmax" ]
+QuasiLocalMeasures::surface_index = [ 0, 1, 2, 3, 4, 5 ]
+QuasiLocalMeasures::surface_name = [ "LHS BNS", "RHS BNS", "r = 0.6 xmax", "r = 0.7 xmax", "r = 0.8 xmax", "r = 0.9 xmax" ]
