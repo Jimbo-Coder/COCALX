@@ -520,7 +520,7 @@ subroutine grid_r_bns_const
   real(long)  ::  drdr, drdrinv
   real(long) :: ratrr  ! ratio between subsequent step outside rgmid (or rather nrgin). \delta_{j+1} = k \delta_{j}
   real(long) :: rvdom, ratrrb, alge, dalge, error, rdet, rdetf, rdet1
-  real(long) :: rfdom, reso_min, drmin, drmininv, ratrf, ratrfb
+  real(long) :: rfdom, reso_min, drmin, drmininv
   integer    :: nrout, ir, itry, nrconst
   real(long) :: dr1, dr1inv, tolerant_val = 5.0d-14
   real(long) :: dr2, dr2inv, rgconst
@@ -633,7 +633,7 @@ do itry = 0, 3
   IF(rdet< 1.e-10) then
     WRITE(6,*) 'good coordinate itry =', itry
     WRITE(6,*) 'good coordinate GR : rdet, ratrr ', rdet, ratrr
-    WRITE(6,*) 'good coordinate FLUID : rdetf, ratrf', rdetf, ratrf
+    WRITE(6,*) 'good coordinate FLUID : rdetf', rdetf
     if (rg(0)==0.0) then
       write(6,*) "Number of constant intervals, dr, N*dr :", nrconst, drdr, nrconst*drdr
       write(6,*) "Number of non-constant intervals, rgout:", nrg - nrconst, rgout
@@ -646,7 +646,7 @@ do itry = 0, 3
   IF(rdet>=1.e-10)then
     WRITE(6,*) ' bad coordinate itry =', itry
     WRITE(6,*) ' bad coordinate GR : rdet, ratrr', rdet, ratrr
-    WRITE(6,*) ' bad coordinate FLUID : rdetf, ratrf', rdetf, ratrf
+    WRITE(6,*) ' bad coordinate FLUID : rdetf', rdetf
     if (itry.eq.3) STOP
   END IF
 end do
@@ -660,7 +660,7 @@ subroutine grid_r_bqs
   real(long)  ::  drdr, drdrinv
   real(long) :: ratrr  ! ratio between subsequent step outside rgmid (or rather nrgin). \delta_{j+1} = k \delta_{j}
   real(long) :: rvdom, ratrrb, alge, dalge, error, rdet, rdetf, rdet1
-  real(long) :: rfdom, reso_min, drmin, drmininv, ratrf, ratrfb
+  real(long) :: rfdom, reso_min, drmin, drmininv
   real(long) :: rr1, rr2, rr3, dr3
   integer    :: nrout, ir, itry, nrconst
   real(long) :: dr1, dr1inv, tolerant_val = 5.0d-14
@@ -732,13 +732,13 @@ subroutine grid_r_bqs
       IF(rdet< 1.e-10) then
         WRITE(6,*) 'good coordinate itry =', itry
         WRITE(6,*) 'good coordinate GR : rdet, ratrr ', rdet, ratrr
-        WRITE(6,*) 'good coordinate FLUID : rdetf, ratrf', rdetf, ratrf
+        WRITE(6,*) 'good coordinate FLUID : rdetf', rdetf
         exit
       end if
       IF(rdet>=1.e-10)then
         WRITE(6,*) ' bad coordinate itry =', itry
         WRITE(6,*) ' bad coordinate GR : rdet, ratrr', rdet, ratrr
-        WRITE(6,*) ' bad coordinate FLUID : rdetf, ratrf', rdetf, ratrf
+        WRITE(6,*) ' bad coordinate FLUID : rdetf', rdetf
         if (itry.eq.3) STOP
       END IF
     end do
@@ -846,13 +846,13 @@ subroutine grid_r_bqs
       IF(rdet< 1.e-10) then
         WRITE(6,*) 'good coordinate itry =', itry
         WRITE(6,*) 'good coordinate GR : rdet, ratrr ', rdet, ratrr
-        WRITE(6,*) 'good coordinate FLUID : rdetf, ratrf', rdetf, ratrf
+        WRITE(6,*) 'good coordinate FLUID : rdetf', rdetf
         exit
       end if
       IF(rdet>=1.e-10)then
         WRITE(6,*) ' bad coordinate itry =', itry
         WRITE(6,*) ' bad coordinate GR : rdet, ratrr', rdet, ratrr
-        WRITE(6,*) ' bad coordinate FLUID : rdetf, ratrf', rdetf, ratrf
+        WRITE(6,*) ' bad coordinate FLUID : rdetf', rdetf
         if (itry.eq.3) STOP
       END IF
     end do

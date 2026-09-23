@@ -1,4 +1,5 @@
 # Interface definition for thorn Cocal
 implements: Cocal
-inherits: ADMBaseX CoordinatesX HydroBaseX AsterX
+inherits: ADMBaseX HydroBaseX AsterX
 
+USES INCLUDE HEADER: loop.hxx

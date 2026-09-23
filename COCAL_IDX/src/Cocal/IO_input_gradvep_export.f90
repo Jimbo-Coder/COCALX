@@ -1,4 +1,4 @@
-subroutine IO_input_gradvep_export(filenm,coc2cac_readformat, vepxf, vepyf, vepzf)                                                                                      
+subroutine IO_input_gradvep_export(filenm,coc2cac_readformat, vepxf, vepyf, vepzf)
   use phys_constant, only : long
   implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
