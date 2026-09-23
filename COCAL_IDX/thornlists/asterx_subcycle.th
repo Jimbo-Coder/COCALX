@@ -195,11 +195,12 @@ CarpetX/TestSymmetries
 CarpetX/TmunuBaseX
 CarpetX/WaveToyX
 
-# Local SpacetimeX/QLM development checkout
-# Standalone repo: SpacetimeX_mfrk (Jimbo-Coder fork),
-# branch pr/qlm-sphericalsurface-poison-jay-dev
+# SpacetimeX with CarpetX surface diagnostics.
 !TARGET = $ARR
-!TYPE = ignore
+!TYPE = git
+!URL = https://github.com/jaykalinani/SpacetimeX.git
+!REPO_BRANCH = nuX
+!REPO_PATH = $2
 !CHECKOUT =
 SpacetimeX_qlm/Cowling
 SpacetimeX_qlm/NewRadX
@@ -254,8 +255,11 @@ BNSTools/VolumeIntegrals_GRMHDX
 BNSTools/VolumeIntegrals_vacuumX
 #BNSTools/Outflow
 
-# Local COCAL_IDX checkout
+# COCAL_IDX: use a local checkout, or set !TYPE to git to fetch main.
 !TARGET = $ARR
 !TYPE   = ignore
+!URL = https://github.com/Jimbo-Coder/COCALX.git
+!REPO_BRANCH = main
+!REPO_PATH = $2
 !CHECKOUT =
 COCALX/COCAL_IDX
