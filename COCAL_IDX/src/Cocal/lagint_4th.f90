@@ -1,7 +1,8 @@
-function lagint_4th(x,y,v)
-  use phys_constant, only : long
-  implicit none
-  real(long) :: lagint_4th
+function COCAL_ID_lagint_4th(x,y,v)
+
+use COCAL_ID_phys_constant, only : long
+implicit none
+  real(long) :: COCAL_ID_lagint_4th
   real(long) :: x(4),y(4), v
   real(long) :: dx12, dx13, dx14, dx23, dx24, dx34
   real(long) :: dx21, dx31, dx32, dx41, dx42, dx43
@@ -28,6 +29,6 @@ function lagint_4th(x,y,v)
       wex3 = xv1*xv2*xv4/(dx31*dx32*dx34) 
       wex4 = xv1*xv2*xv3/(dx41*dx42*dx43) 
 !
-      lagint_4th = wex1*y(1) + wex2*y(2) + wex3*y(3) + wex4*y(4)
+      COCAL_ID_lagint_4th = wex1*y(1) + wex2*y(2) + wex3*y(3) + wex4*y(4)
 !
-end function lagint_4th
+end function COCAL_ID_lagint_4th

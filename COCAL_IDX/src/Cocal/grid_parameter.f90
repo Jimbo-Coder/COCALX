@@ -1,9 +1,9 @@
-module grid_parameter
-  use phys_constant, only : long
-  use def_matter_parameter, only : emdc, pinx
-  use def_quantities, only : restmass_sph, gravmass_sph, &
-  &                          MoverR_sph, schwarz_radi_sph
-  implicit none
+module COCAL_ID_grid_parameter
+use COCAL_ID_phys_constant, only : long
+use COCAL_ID_def_matter_parameter, only : emdc, pinx
+use COCAL_ID_def_quantities, only : restmass_sph, gravmass_sph, MoverR_sph, schwarz_radi_sph
+
+implicit none
   integer :: nrg, ntg, npg        ! GR coordinate
   Integer :: nlg                  ! maximum multipole for Legendre
   integer :: nrf, ntf, npf        ! Fluid coordinate
@@ -25,7 +25,8 @@ module grid_parameter
   real(long) :: target_sepa, target_qt, target_sx, target_sy, target_sz
 contains
 subroutine read_parameter
-  implicit none
+
+implicit none
   real(long) :: emdc_ini
   open(1,file='rnspar.dat',status='old')
   read(1,'(4i5)') nrg, ntg, npg, nlg
@@ -53,7 +54,8 @@ end subroutine read_parameter
 !Modified routine to allow passing an initial data directory as a
 !string. Used for Cactus ID import thorn.
 subroutine read_parameter_cactus(dir_path)
-  implicit none
+
+implicit none
   character*400, intent(in) :: dir_path
   real(long) :: emdc_ini
   open(1,file=trim(dir_path)//'/'//'rnspar.dat',status='old')
@@ -79,4 +81,4 @@ subroutine read_parameter_cactus(dir_path)
   npfxzp = 0; npfxzm = npf/2; npfyzp = npf/4; npfyzm = 3*(npf/4)
 end subroutine read_parameter_cactus
 
-end module grid_parameter
+end module COCAL_ID_grid_parameter

@@ -1,9 +1,10 @@
-subroutine read_parameter_binary_excision_mpt(impt)
-  use phys_constant, only : long
-  use grid_parameter, only : nrf
-  use coordinate_grav_r, only : rg
-  use grid_parameter_binary_excision, only : ex_nrg, ex_ndis
-  implicit none
+subroutine COCAL_ID_read_parameter_binary_excision_mpt(impt)
+
+use COCAL_ID_phys_constant, only : long
+use COCAL_ID_grid_parameter, only : nrf
+use COCAL_ID_coordinate_grav_r, only : rg
+use COCAL_ID_grid_parameter_binary_excision, only : ex_nrg, ex_ndis
+implicit none
   integer,intent(in)  :: impt
   character(len=1) :: np(5) = (/'1', '2','3', '4', '5'/)
   open(1,file='bin_ex_par_mpt'//np(impt)//'.dat',status='old')
@@ -15,14 +16,15 @@ subroutine read_parameter_binary_excision_mpt(impt)
     if (nrf.ge.ex_nrg) write(6,*) 'nrf = ', nrf, '  ex_nrg = ', ex_nrg
   end if
   if (ex_nrg.eq.0) write(6,*) 'No binary excision for patch =',impt 
-end subroutine read_parameter_binary_excision_mpt
+end subroutine COCAL_ID_read_parameter_binary_excision_mpt
 
-subroutine read_parameter_binary_excision_mpt_cactus(impt, dir_path)
-  use phys_constant, only : long
-  use grid_parameter, only : nrf
-  use coordinate_grav_r, only : rg
-  use grid_parameter_binary_excision, only : ex_nrg, ex_ndis
-  implicit none
+subroutine COCAL_ID_read_parameter_binary_excision_mpt_cactus(impt, dir_path)
+
+use COCAL_ID_phys_constant, only : long
+use COCAL_ID_grid_parameter, only : nrf
+use COCAL_ID_coordinate_grav_r, only : rg
+use COCAL_ID_grid_parameter_binary_excision, only : ex_nrg, ex_ndis
+implicit none
   integer,intent(in)  :: impt
   character(len=*), intent(in) :: dir_path
   character(len=1) :: np(5) = (/'1', '2','3', '4', '5'/)
@@ -35,4 +37,4 @@ subroutine read_parameter_binary_excision_mpt_cactus(impt, dir_path)
     if (nrf.ge.ex_nrg) write(6,*) 'nrf = ', nrf, '  ex_nrg = ', ex_nrg
   end if
   if (ex_nrg.eq.0) write(6,*) 'No binary excision for patch =',impt 
-end subroutine read_parameter_binary_excision_mpt_cactus
+end subroutine COCAL_ID_read_parameter_binary_excision_mpt_cactus

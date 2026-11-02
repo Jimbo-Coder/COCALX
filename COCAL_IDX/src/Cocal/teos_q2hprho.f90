@@ -1,14 +1,14 @@
-subroutine teos_q2hprho(q,h,pre,rho,ened)
+subroutine COCAL_ID_teos_q2hprho(q,h,pre,rho,ened)
 !
 
-use def_teos_parameter
-use phys_constant, only: long
+use COCAL_ID_def_teos_parameter
+use COCAL_ID_phys_constant, only: long
 implicit none
 !
   real(8), intent(inout) :: q
   real(8), intent(out)   :: h, pre, rho, ened
   integer                :: iphase, i0
-  real(long), external   :: lagint_4th
+  real(long), external   :: COCAL_ID_lagint_4th
   real(long)             :: x4(4), f4(4), qloc
   real(8)                :: hin, qin, abin, abct, fac1, fac2, fack, small
 !
@@ -32,23 +32,23 @@ implicit none
     return
   end if
 
-  call teos_lookup(q, qi, iphase)
+  call COCAL_ID_teos_lookup(q,qi,iphase)
 
   i0 = min0(max0(iphase-2,0),nphase-3)
   qloc = q
 
   x4(1:4) = qi(i0:i0+3)
   f4(1:4) = hi(i0:i0+3)
-  h       = lagint_4th(x4,f4,qloc)
+  h       = COCAL_ID_lagint_4th(x4,f4,qloc)
   if (h <= 1.0d0) h = 1.0d0
 
   f4(1:4) = prei(i0:i0+3)
-  pre     = lagint_4th(x4,f4,qloc)
+  pre     = COCAL_ID_lagint_4th(x4,f4,qloc)
 
   f4(1:4) = rhoi(i0:i0+3)
-  rho     = lagint_4th(x4,f4,qloc)
+  rho     = COCAL_ID_lagint_4th(x4,f4,qloc)
 
   f4(1:4) = enei(i0:i0+3)
-  ened    = lagint_4th(x4,f4,qloc)
+  ened    = COCAL_ID_lagint_4th(x4,f4,qloc)
 !
-end subroutine teos_q2hprho
+end subroutine COCAL_ID_teos_q2hprho

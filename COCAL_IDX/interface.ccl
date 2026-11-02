@@ -1,5 +1,5 @@
-# Interface definition for thorn Cocal
-implements: Cocal
+# Interface definition for thorn COCAL_IDX
+implements: COCAL_IDX
 inherits: ADMBaseX HydroBaseX
 
 USES INCLUDE HEADER: loop.hxx

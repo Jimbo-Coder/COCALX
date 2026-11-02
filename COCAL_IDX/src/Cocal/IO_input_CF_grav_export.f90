@@ -1,6 +1,7 @@
-subroutine IO_input_CF_grav_export(filenm,coc2cac_readformat,psi,alph,bvxd,bvyd,bvzd)
-  use phys_constant, only : long, nnrg, nntg, nnpg
-  implicit none
+subroutine COCAL_ID_IO_input_CF_grav_export(filenm,coc2cac_readformat,psi,alph,bvxd,bvyd,bvzd)
+
+use COCAL_ID_phys_constant, only : long, nnrg, nntg, nnpg
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: psi(:,:,:), alph(:,:,:), bvxd(:,:,:), bvyd(:,:,:), bvzd(:,:,:)
   character(len=*) :: filenm, coc2cac_readformat
@@ -43,4 +44,4 @@ subroutine IO_input_CF_grav_export(filenm,coc2cac_readformat,psi,alph,bvxd,bvyd,
    end if
   close(13)
 !
-end subroutine IO_input_CF_grav_export
+end subroutine COCAL_ID_IO_input_CF_grav_export

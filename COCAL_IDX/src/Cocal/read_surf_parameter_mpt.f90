@@ -1,8 +1,9 @@
-subroutine read_surf_parameter_mpt(impt)
-  use phys_constant, only : long
-  use grid_parameter
-  use def_matter_parameter, only : omespx, omespy, omespz
-  implicit none
+subroutine COCAL_ID_read_surf_parameter_mpt(impt)
+
+use COCAL_ID_phys_constant, only : long
+use COCAL_ID_grid_parameter
+use COCAL_ID_def_matter_parameter, only : omespx, omespy, omespz
+implicit none
   integer,intent(in)  :: impt
   character(len=1) :: np(5) = (/'1', '2','3', '4', '5'/)
 
@@ -29,14 +30,15 @@ subroutine read_surf_parameter_mpt(impt)
     write(6,*) "Patch:",impt," r_surf=", r_surf
     write(6,*) "omespx,omespy,omespz=", omespx,omespy,omespz
   end if
-end subroutine read_surf_parameter_mpt
+end subroutine COCAL_ID_read_surf_parameter_mpt
 
 
-subroutine read_surf_parameter_mpt_cactus(impt, dir_path)
-  use phys_constant, only : long
-  use grid_parameter
-  use def_matter_parameter, only : omespx, omespy, omespz
-  implicit none
+subroutine COCAL_ID_read_surf_parameter_mpt_cactus(impt, dir_path)
+
+use COCAL_ID_phys_constant, only : long
+use COCAL_ID_grid_parameter
+use COCAL_ID_def_matter_parameter, only : omespx, omespy, omespz
+implicit none
   integer,intent(in)  :: impt
   character(len=*), intent(in) :: dir_path
   character(len=1) :: np(5) = (/'1', '2','3', '4', '5'/)
@@ -64,5 +66,5 @@ subroutine read_surf_parameter_mpt_cactus(impt, dir_path)
     write(6,*) "Patch:",impt," r_surf=", r_surf
     write(6,*) "omespx,omespy,omespz=", omespx,omespy,omespz
   end if
-end subroutine read_surf_parameter_mpt_cactus
+end subroutine COCAL_ID_read_surf_parameter_mpt_cactus
 

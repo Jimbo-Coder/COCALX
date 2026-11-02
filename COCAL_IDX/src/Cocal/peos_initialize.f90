@@ -1,8 +1,9 @@
-subroutine peos_initialize
+subroutine COCAL_ID_peos_initialize
 !
-  use phys_constant        !g,c,solmas,nnpeos
-  use def_peos_parameter   !abc,abi,rhoi,qi,hi,nphase,rhoini_cgs,emdini_gcm1
-  implicit none
+
+use COCAL_ID_phys_constant        !g,c,solmas,nnpeos
+use COCAL_ID_def_peos_parameter   !abc,abi,rhoi,qi,hi,nphase,rhoini_cgs,emdini_gcm1
+implicit none
 !
   real(8) :: rho_0, pre_0, facrho, facpre, fac2, gg, cc, ss
   integer :: ii, iphase
@@ -30,7 +31,7 @@ subroutine peos_initialize
     rhoi(ii) = facrho*rhocgs(ii)
   end do
 !
-  call peos_lookup(rho_0,rhocgs,iphase)
+  call COCAL_ID_peos_lookup(rho_0,rhocgs,iphase)
 !    
   abc(iphase) = pre_0/rho_0**abi(iphase)
   abc(iphase) = facpre/facrho**abi(iphase)*abc(iphase)
@@ -69,17 +70,18 @@ subroutine peos_initialize
   close(860)
 !
   rhoini_gcm1 = facrho*rhoini_cgs
-  call peos_lookup(rhoini_gcm1,rhoi,iphase)
+  call COCAL_ID_peos_lookup(rhoini_gcm1,rhoi,iphase)
   emdini_gcm1 = abc(iphase)*rhoini_gcm1**(abi(iphase)-1.0d0)
 !
-end subroutine peos_initialize
+end subroutine COCAL_ID_peos_initialize
 
 
-subroutine peos_initialize_cactus(dir_path)
+subroutine COCAL_ID_peos_initialize_cactus(dir_path)
 !
-  use phys_constant        !g,c,solmas,nnpeos
-  use def_peos_parameter   !abc,abi,rhoi,qi,hi,nphase,rhoini_cgs,emdini_gcm1
-  implicit none
+
+use COCAL_ID_phys_constant        !g,c,solmas,nnpeos
+use COCAL_ID_def_peos_parameter   !abc,abi,rhoi,qi,hi,nphase,rhoini_cgs,emdini_gcm1
+implicit none
   character*400, intent(in) :: dir_path
   real(8) :: rho_0, pre_0, facrho, facpre, fac2, gg, cc, ss
   integer :: ii, iphase
@@ -105,7 +107,7 @@ subroutine peos_initialize_cactus(dir_path)
     rhoi(ii) = facrho*rhocgs(ii)
   end do
 !
-  call peos_lookup(rho_0,rhocgs,iphase)
+  call COCAL_ID_peos_lookup(rho_0,rhocgs,iphase)
 !    
   abc(iphase) = pre_0/rho_0**abi(iphase)
   abc(iphase) = facpre/facrho**abi(iphase)*abc(iphase)
@@ -144,7 +146,7 @@ subroutine peos_initialize_cactus(dir_path)
 !  close(860)
 !
   rhoini_gcm1 = facrho*rhoini_cgs
-  call peos_lookup(rhoini_gcm1,rhoi,iphase)
+  call COCAL_ID_peos_lookup(rhoini_gcm1,rhoi,iphase)
   emdini_gcm1 = abc(iphase)*rhoini_gcm1**(abi(iphase)-1.0d0)
 !
-end subroutine peos_initialize_cactus
+end subroutine COCAL_ID_peos_initialize_cactus

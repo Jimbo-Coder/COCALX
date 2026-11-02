@@ -1,11 +1,12 @@
-subroutine allocate_grid_parameter_mpt
-  use phys_constant, only : nmpt
-  use grid_parameter_mpt
-  use make_int_array_2d
-  use make_char2_array_2d
-  use make_char1_array_2d
-  use make_array_2d
-  implicit none
+subroutine COCAL_ID_allocate_grid_parameter_mpt
+
+use COCAL_ID_phys_constant, only : nmpt
+use COCAL_ID_grid_parameter_mpt
+use COCAL_ID_make_int_array_2d
+use COCAL_ID_make_char2_array_2d
+use COCAL_ID_make_char1_array_2d
+use COCAL_ID_make_array_2d
+implicit none
 !  
   call alloc_int_array2d(grid_param_int_     , 1, 39, 1, nmpt)
   call alloc_char2_array2d(grid_param_char2_ , 1, 10, 1, nmpt)
@@ -16,4 +17,4 @@ subroutine allocate_grid_parameter_mpt
   call alloc_array2d(surf_param_real_        , 1, 10, 1, nmpt)
   call alloc_char1_array2d(surf_param_char1_ , 1, 10, 1, nmpt)
 !
-end subroutine allocate_grid_parameter_mpt
+end subroutine COCAL_ID_allocate_grid_parameter_mpt

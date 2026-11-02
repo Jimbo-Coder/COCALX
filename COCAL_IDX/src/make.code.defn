@@ -1,4 +1,4 @@
-# Main make.code.defn file for thorn Cocalrns2cac
+# Main make.code.defn file for thorn COCAL_IDX
 
-# Source files in this directory
-SRCS = carpetx_coordinates.cxx coc2cac_ID_master_v1_dev2.F90
+# Source files in this directory; COCAL_ID_master.F90 includes the reader.
+SRCS = COCAL_ID_master.F90 cocal_id_node_shared.c cocal_id_set_data.cxx

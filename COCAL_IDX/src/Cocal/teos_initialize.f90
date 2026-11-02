@@ -1,14 +1,14 @@
-subroutine teos_initialize
+subroutine COCAL_ID_teos_initialize
 !
 
-use phys_constant        !g,c,solmas,nnteos
-use def_teos_parameter   !prei,enei,kappa_crust,gamma_crust
+use COCAL_ID_phys_constant        !g,c,solmas,nnteos
+use COCAL_ID_def_teos_parameter   !prei,enei,kappa_crust,gamma_crust
 implicit none
 !
   real(8) :: facrho
   real(8) :: ene, pre, hh, rho
   integer :: ii, iphase, idum, i0
-  real(8), external :: lagint_4th
+  real(8), external :: COCAL_ID_lagint_4th
   real(8)           :: x4(4), f4(4)
 !
   facrho = (g/c**2)**3*solmas**2
@@ -37,26 +37,26 @@ implicit none
   write(6,'(a21,1p,e23.15)') "******* rhoini_cgs = ", rhoini_cgs
   rhoini_gcm1 = facrho*rhoini_cgs
 
-  call teos_lookup(rhoini_gcm1,rhoi,iphase)
+  call COCAL_ID_teos_lookup(rhoini_gcm1,rhoi,iphase)
   i0 = min0(max0(iphase-2,0),nphase-3)
   x4(1:4) = rhoi(i0:i0+3)
   f4(1:4) = qi(i0:i0+3)
-  emdini_gcm1 = lagint_4th(x4,f4,rhoini_gcm1)
+  emdini_gcm1 = COCAL_ID_lagint_4th(x4,f4,rhoini_gcm1)
   write(6,'(a26,1p,2e23.15)') "(rhoini_gcm1,emdini_gcm1)=", rhoini_gcm1, emdini_gcm1
 !
-end subroutine teos_initialize
+end subroutine COCAL_ID_teos_initialize
 
-subroutine teos_initialize_cactus(dir_path)
+subroutine COCAL_ID_teos_initialize_cactus(dir_path)
 !
 
-use phys_constant        !g,c,solmas,nnteos
-use def_teos_parameter   !prei,enei,kappa_crust,gamma_crust
+use COCAL_ID_phys_constant        !g,c,solmas,nnteos
+use COCAL_ID_def_teos_parameter   !prei,enei,kappa_crust,gamma_crust
 implicit none
   character*400, intent(in) :: dir_path
   real(8) :: facrho
   real(8) :: ene, pre, hh, rho
   integer :: ii, iphase, idum, i0
-  real(8), external :: lagint_4th
+  real(8), external :: COCAL_ID_lagint_4th
   real(8)           :: x4(4), f4(4)
 !
   facrho = (g/c**2)**3*solmas**2
@@ -85,20 +85,20 @@ implicit none
   write(6,'(a21,1p,e23.15)') "******* rhoini_cgs = ", rhoini_cgs
   rhoini_gcm1 = facrho*rhoini_cgs
 
-  call teos_lookup(rhoini_gcm1,rhoi,iphase)
+  call COCAL_ID_teos_lookup(rhoini_gcm1,rhoi,iphase)
   i0 = min0(max0(iphase-2,0),nphase-3)
   x4(1:4) = rhoi(i0:i0+3)
   f4(1:4) = qi(i0:i0+3)
-  emdini_gcm1 = lagint_4th(x4,f4,rhoini_gcm1)
+  emdini_gcm1 = COCAL_ID_lagint_4th(x4,f4,rhoini_gcm1)
   write(6,'(a26,1p,2e23.15)') "(rhoini_gcm1,emdini_gcm1)=", rhoini_gcm1, emdini_gcm1
 !
-end subroutine teos_initialize_cactus
+end subroutine COCAL_ID_teos_initialize_cactus
 
-subroutine teos_initialize_mpt_cactus(impt, dir_path)
+subroutine COCAL_ID_teos_initialize_mpt_cactus(impt, dir_path)
 !
 
-use phys_constant        !g,c,solmas,nnteos
-use def_teos_parameter   !prei,enei,kappa_crust,gamma_crust
+use COCAL_ID_phys_constant        !g,c,solmas,nnteos
+use COCAL_ID_def_teos_parameter   !prei,enei,kappa_crust,gamma_crust
 implicit none
   integer, intent(in)       :: impt
   character*400, intent(in) :: dir_path
@@ -106,7 +106,7 @@ implicit none
   real(8)                   :: facrho
   real(8)                   :: ene, pre, hh, rho
   integer                   :: ii, iphase, idum, i0
-  real(8), external         :: lagint_4th
+  real(8), external         :: COCAL_ID_lagint_4th
   real(8)                   :: x4(4), f4(4)
 !
   facrho = (g/c**2)**3*solmas**2
@@ -135,11 +135,11 @@ implicit none
   write(6,'(a21,1p,e23.15)') "******* rhoini_cgs = ", rhoini_cgs
   rhoini_gcm1 = facrho*rhoini_cgs
 
-  call teos_lookup(rhoini_gcm1,rhoi,iphase)
+  call COCAL_ID_teos_lookup(rhoini_gcm1,rhoi,iphase)
   i0 = min0(max0(iphase-2,0),nphase-3)
   x4(1:4) = rhoi(i0:i0+3)
   f4(1:4) = qi(i0:i0+3)
-  emdini_gcm1 = lagint_4th(x4,f4,rhoini_gcm1)
+  emdini_gcm1 = COCAL_ID_lagint_4th(x4,f4,rhoini_gcm1)
   write(6,'(a26,1p,2e23.15)') "(rhoini_gcm1,emdini_gcm1)=", rhoini_gcm1, emdini_gcm1
 !
-end subroutine teos_initialize_mpt_cactus
+end subroutine COCAL_ID_teos_initialize_mpt_cactus

@@ -1,6 +1,6 @@
-subroutine lagint_4th_weights(x,v,w)
+subroutine COCAL_ID_lagint_4th_weights(x,v,w)
 
-use phys_constant, only : long
+use COCAL_ID_phys_constant, only : long
 implicit none
   real(long), intent(in)  :: x(4), v
   real(long), intent(out) :: w(4)
@@ -29,15 +29,15 @@ implicit none
       w(3) = xv1*xv2*xv4/(dx31*dx32*dx34)
       w(4) = xv1*xv2*xv3/(dx41*dx42*dx43)
 !
-end subroutine lagint_4th_weights
+end subroutine COCAL_ID_lagint_4th_weights
 
-function lagint_4th_apply(w,y)
+function COCAL_ID_lagint_4th_apply(w,y)
 
-use phys_constant, only : long
+use COCAL_ID_phys_constant, only : long
 implicit none
-  real(long) :: lagint_4th_apply
+  real(long) :: COCAL_ID_lagint_4th_apply
   real(long), intent(in) :: w(4), y(4)
 !
-      lagint_4th_apply = w(1)*y(1) + w(2)*y(2) + w(3)*y(3) + w(4)*y(4)
+      COCAL_ID_lagint_4th_apply = w(1)*y(1) + w(2)*y(2) + w(3)*y(3) + w(4)*y(4)
 !
-end function lagint_4th_apply
+end function COCAL_ID_lagint_4th_apply

@@ -1,6 +1,6 @@
-module def_bh_parameter
-  use phys_constant, only : long
-  implicit none
+module COCAL_ID_def_bh_parameter
+use COCAL_ID_phys_constant, only : long
+implicit none
   real(long) ::  ome_bh, spin_bh, mass_bh
   real(long) ::  alph_bh, psi_bh
   real(long) ::  th_spin_bh_deg, phi_spin_bh_deg
@@ -12,4 +12,4 @@ module def_bh_parameter
   character(2) ::  bh_bctype, bh_sptype, bh_soltype
   ! ome_bh  is the angular velocity \Omega, 
   ! spin_bh is the spin angular velocity \Omega
-end module def_bh_parameter
+end module COCAL_ID_def_bh_parameter

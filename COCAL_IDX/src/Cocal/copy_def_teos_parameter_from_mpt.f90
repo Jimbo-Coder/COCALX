@@ -1,9 +1,9 @@
-subroutine copy_def_teos_parameter_from_mpt(impt)
+subroutine COCAL_ID_copy_def_teos_parameter_from_mpt(impt)
 
-use def_teos_parameter
-use def_teos_parameter_mpt
-use phys_constant, only : nnteos
-use copy_array_static_2dto1d_mpt
+use COCAL_ID_def_teos_parameter
+use COCAL_ID_def_teos_parameter_mpt
+use COCAL_ID_phys_constant, only : nnteos
+use COCAL_ID_copy_array_static_2dto1d_mpt
 implicit none
   integer :: i, impt
 !
@@ -26,4 +26,4 @@ implicit none
   i=0
   i=i+1; nphase = def_teos_param_int_(i,impt)
 !
-end subroutine copy_def_teos_parameter_from_mpt
+end subroutine COCAL_ID_copy_def_teos_parameter_from_mpt

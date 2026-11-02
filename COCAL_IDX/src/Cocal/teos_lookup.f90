@@ -1,8 +1,8 @@
-subroutine teos_lookup(qp, qpar, iphase)
+subroutine COCAL_ID_teos_lookup(qp, qpar, iphase)
 !
 
-use phys_constant
-use def_teos_parameter
+use COCAL_ID_phys_constant
+use COCAL_ID_def_teos_parameter
 implicit none
 !
   real(8), intent(in)  :: qp, qpar(0:nnteos)
@@ -31,4 +31,4 @@ implicit none
   end do
   iphase = ihi
 !
-end subroutine teos_lookup
+end subroutine COCAL_ID_teos_lookup

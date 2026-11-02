@@ -1,14 +1,15 @@
 !  theta_coordinate
 !______________________________________________
-module coordinate_grav_theta
-  use phys_constant,  only : pi, nntg, long
-  use grid_parameter, only : ntg 
-  implicit none
+module COCAL_ID_coordinate_grav_theta
+use COCAL_ID_phys_constant,  only : pi, nntg, long
+use COCAL_ID_grid_parameter, only : ntg 
+implicit none
   Real(long) :: dthg, dthginv 
   Real(long) :: thg(0:nntg), hthg(nntg)
 contains
 subroutine grid_theta
-  implicit none
+
+implicit none
   Integer  ::  it
   dthg  = pi/REAL(ntg)
   dthginv=1.0e0/dthg
@@ -18,4 +19,4 @@ subroutine grid_theta
     hthg(it) = 0.5d0*(thg(it) + thg(it-1))
   end do
 end subroutine grid_theta
-end module coordinate_grav_theta
+end module COCAL_ID_coordinate_grav_theta

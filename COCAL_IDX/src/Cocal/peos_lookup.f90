@@ -1,8 +1,9 @@
-subroutine peos_lookup(qp,qpar,iphase)
+subroutine COCAL_ID_peos_lookup(qp,qpar,iphase)
 !
-  use phys_constant			!nnpeos
-  use def_peos_parameter	!abc,abi,rhoi,qi,hi,nphase
-  implicit none
+
+use COCAL_ID_phys_constant			!nnpeos
+use COCAL_ID_def_peos_parameter	!abc,abi,rhoi,qi,hi,nphase
+implicit none
 !
   real(8), intent(in)  :: qp, qpar(0:nnpeos)
   real(8)              :: det
@@ -20,4 +21,4 @@ subroutine peos_lookup(qp,qpar,iphase)
     end if
   end do
 !
-end subroutine peos_lookup
+end subroutine COCAL_ID_peos_lookup

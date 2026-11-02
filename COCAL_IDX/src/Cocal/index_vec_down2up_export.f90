@@ -1,6 +1,7 @@
-subroutine index_vec_down2up_export(hxxu,hxyu,hxzu,hyyu,hyzu,hzzu,vecxu,vecyu,veczu,vecxd,vecyd,veczd)
-  use grid_parameter, only : nrg, ntg, npg
-  implicit none
+subroutine COCAL_ID_index_vec_down2up_export(hxxu,hxyu,hxzu,hyyu,hyzu,hzzu,vecxu,vecyu,veczu,vecxd,vecyd,veczd)
+
+use COCAL_ID_grid_parameter, only : nrg, ntg, npg
+implicit none
   real(8), pointer :: vecxu(:,:,:), vecyu(:,:,:), veczu(:,:,:), &
   &                   vecxd(:,:,:), vecyd(:,:,:), veczd(:,:,:), &
   &                   hxxu(:,:,:),  hxyu(:,:,:),  hxzu(:,:,:),  &
@@ -35,4 +36,4 @@ subroutine index_vec_down2up_export(hxxu,hxyu,hxzu,hyyu,hyzu,hzzu,vecxu,vecyu,ve
     end do
   end do
 !
-end subroutine index_vec_down2up_export
+end subroutine COCAL_ID_index_vec_down2up_export

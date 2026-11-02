@@ -1,8 +1,12 @@
-# Configuration definitions for thorn Cocal
+# Configuration definitions for thorn COCAL_IDX
 
 REQUIRES Fortran Loop
 
-PROVIDES Cocal
+PROVIDES COCAL_IDX
 {
-  
+}
+
+# With MPI the spline coefficients are shared by the ranks of a node.
+OPTIONAL MPI
+{
 }

@@ -1,10 +1,11 @@
-subroutine read_parameter_mpt(impt)
-  use phys_constant, only : long
-  use def_matter_parameter, only : emdc, pinx
-  use def_quantities, only : restmass_sph, gravmass_sph, &
-  &                          MoverR_sph, schwarz_radi_sph
-  use grid_parameter
-  implicit none
+subroutine COCAL_ID_read_parameter_mpt(impt)
+
+use COCAL_ID_phys_constant, only : long
+use COCAL_ID_def_matter_parameter, only : emdc, pinx
+use COCAL_ID_def_quantities, only : restmass_sph, gravmass_sph, MoverR_sph, schwarz_radi_sph
+
+use COCAL_ID_grid_parameter
+implicit none
   integer,intent(in)  :: impt
   character(len=1) :: np(5) = (/'1', '2','3', '4', '5'/)
   real(long) :: emdc_ini
@@ -29,17 +30,18 @@ subroutine read_parameter_mpt(impt)
   npgxzp = 0; npgxzm = npg/2; npgyzp = npg/4; npgyzm = 3*(npg/4)
   ntfpolp = 0; ntfpolm = ntf; ntfeq = ntf/2; ntfxy = ntf/2
   npfxzp = 0; npfxzm = npf/2; npfyzp = npf/4; npfyzm = 3*(npf/4)
-end subroutine read_parameter_mpt
+end subroutine COCAL_ID_read_parameter_mpt
 
 !Modified routine to allow passing an initial data directory as a
 !string. Used for Cactus ID import thorn.
-subroutine read_parameter_mpt_cactus(impt, dir_path)
-  use phys_constant, only : long
-  use def_matter_parameter, only : emdc, pinx
-  use def_quantities, only : restmass_sph, gravmass_sph, &
-  &                          MoverR_sph, schwarz_radi_sph
-  use grid_parameter
-  implicit none
+subroutine COCAL_ID_read_parameter_mpt_cactus(impt, dir_path)
+
+use COCAL_ID_phys_constant, only : long
+use COCAL_ID_def_matter_parameter, only : emdc, pinx
+use COCAL_ID_def_quantities, only : restmass_sph, gravmass_sph, MoverR_sph, schwarz_radi_sph
+
+use COCAL_ID_grid_parameter
+implicit none
   integer,intent(in)  :: impt
   character(len=*) :: dir_path
   character(len=1) :: np(5) = (/'1', '2','3', '4', '5'/)
@@ -66,5 +68,4 @@ subroutine read_parameter_mpt_cactus(impt, dir_path)
   npgxzp = 0; npgxzm = npg/2; npgyzp = npg/4; npgyzm = 3*(npg/4)
   ntfpolp = 0; ntfpolm = ntf; ntfeq = ntf/2; ntfxy = ntf/2
   npfxzp = 0; npfxzm = npf/2; npfyzp = npf/4; npfyzm = 3*(npf/4)
-end subroutine read_parameter_mpt_cactus
-
+end subroutine COCAL_ID_read_parameter_mpt_cactus

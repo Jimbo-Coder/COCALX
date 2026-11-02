@@ -1,40 +1,39 @@
-# Schedule definitions for thorn Cocal
+# Schedule definitions for thorn COCAL_IDX
 
-if (CCTK_Equals(initial_data, "CocalRNS") || (CCTK_Equals(initial_data, "CocalBNS")))
+if (CCTK_Equals(initial_data, "CocalRNS") || CCTK_Equals(initial_data, "CocalBNS"))
 {
-   #SCHEDULE GROUP coc2cac_dummy AFTER ADMBaseX_PostInitial BEFORE HydroBaseX_Initial AT Initial
-   #{
-#
-   #} "Enforce Hydro after ADM grid variables."
-   if (CCTK_Equals(initial_data, "CocalRNS"))
-      SCHEDULE coc2cac_read_rns_data IN HydroBaseX_InitialData BEFORE coc2cac_main
-      {
-         LANG: FORTRAN
-         options: global
-      } "read COCAL RNS data once per MPI rank"
-   if (CCTK_Equals(initial_data, "CocalBNS"))
-      SCHEDULE coc2cac_read_bns_data IN HydroBaseX_InitialData BEFORE coc2cac_main
-      {
-         LANG: FORTRAN
-         options: global
-      } "read COCAL BNS data once per MPI rank"
-   SCHEDULE coc2cac_main IN HydroBaseX_InitialData AFTER HydroBaseX_initial_data
+   # Before the ID groups, which are inside ODESolvers_Initial when that
+   # thorn is active; ADMBaseX's initial_lapse and initial_shift then replace
+   # COCAL's lapse and shift unless they are "Cocal". The read is done once,
+   # though CarpetX enters the initial bin again for every level it adds.
+   SCHEDULE COCAL_ID_read_data AT INITIAL BEFORE (ODESolvers_Initial HydroBaseX_InitialData)
    {
       LANG: FORTRAN
-      WRITES: HydroBaseX::rho(everywhere) HydroBaseX::press(everywhere) HydroBaseX::eps(everywhere) HydroBaseX::vel(everywhere)
-      WRITES: HydroBaseX::Bvec(everywhere) HydroBaseX::Avecx(everywhere) HydroBaseX::Avecy(everywhere) HydroBaseX::Avecz(everywhere)
-      WRITES: ADMBaseX::metric(everywhere) ADMBaseX::curv(everywhere) ADMBaseX::lapse(everywhere) ADMBaseX::shift(everywhere)
-   }"Read Cocal Initial Data into Cactus"
-   if (CCTK_Equals(initial_data, "CocalRNS"))
-      SCHEDULE coc2cac_deallocate_rns AT CPINITIAL
+      OPTIONS: global
+   } "Read the COCAL data once per MPI rank"
+
+   SCHEDULE COCAL_ID_set_metric AT INITIAL AFTER COCAL_ID_read_data BEFORE (ODESolvers_Initial HydroBaseX_InitialData)
+   {
+      LANG: C
+      WRITES: ADMBaseX::metric(everywhere) ADMBaseX::curv(everywhere)
+      WRITES: ADMBaseX::lapse(everywhere) ADMBaseX::shift(everywhere)
+   } "Interpolate the COCAL metric onto the CarpetX grid"
+
+   if (CCTK_Equals(initial_hydro, "Cocal"))
+   {
+      SCHEDULE COCAL_ID_set_hydro IN HydroBaseX_InitialData
       {
-         LANG: FORTRAN
-         options: global
-      } "deallocate all COCAL rns data"
-   if (CCTK_Equals(initial_data, "CocalBNS"))
-      SCHEDULE coc2cac_deallocate_bns AT CPINITIAL
-      {
-         LANG: FORTRAN
-         options: global
-      } "deallocate all COCAL bns data"
+         LANG: C
+         WRITES: HydroBaseX::rho(everywhere) HydroBaseX::press(everywhere)
+         WRITES: HydroBaseX::eps(everywhere) HydroBaseX::vel(everywhere)
+         WRITES: HydroBaseX::Bvec(everywhere) HydroBaseX::Avecx(everywhere)
+         WRITES: HydroBaseX::Avecy(everywhere) HydroBaseX::Avecz(everywhere)
+      } "Interpolate the COCAL matter onto the CarpetX grid"
+   }
+
+   SCHEDULE COCAL_ID_free_data AT CPINITIAL
+   {
+      LANG: FORTRAN
+      OPTIONS: global
+   } "Free the COCAL data"
 }

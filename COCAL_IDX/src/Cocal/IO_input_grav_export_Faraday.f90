@@ -1,6 +1,7 @@
-subroutine IO_input_grav_export_Faraday(filenm,coc2cac_readformat,fxd,fyd,fzd,fxyd,fxzd,fyzd)
-  use phys_constant, only : long
-  implicit none
+subroutine COCAL_ID_IO_input_grav_export_Faraday(filenm,coc2cac_readformat,fxd,fyd,fzd,fxyd,fxzd,fyzd)
+
+use COCAL_ID_phys_constant, only : long
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: fxd(:,:,:), fyd(:,:,:), fzd(:,:,:), fxyd(:,:,:), fxzd(:,:,:), fyzd(:,:,:)
   character(len=*) :: filenm,coc2cac_readformat
@@ -38,4 +39,4 @@ subroutine IO_input_grav_export_Faraday(filenm,coc2cac_readformat,fxd,fyd,fzd,fx
   end if
   close(13)
 !
-end subroutine IO_input_grav_export_Faraday
+end subroutine COCAL_ID_IO_input_grav_export_Faraday

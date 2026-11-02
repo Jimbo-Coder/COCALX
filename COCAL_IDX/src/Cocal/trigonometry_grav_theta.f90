@@ -1,10 +1,10 @@
 !  trigonometric functions in theta coordinate
 !______________________________________________
-MODULE trigonometry_grav_theta
-  use phys_constant, only : nntg, long
-  use grid_parameter, only : ntg 
-  use coordinate_grav_theta, only : thg, hthg
-  implicit none
+MODULE COCAL_ID_trigonometry_grav_theta
+use COCAL_ID_phys_constant, only : nntg, long
+use COCAL_ID_grid_parameter, only : ntg 
+use COCAL_ID_coordinate_grav_theta, only : thg, hthg
+implicit none
   real(long) :: sinthg(0:nntg),costhg(0:nntg)
   real(long) :: cosecthg(0:nntg),cotanthg(0:nntg)
   real(long) :: hsinthg(nntg), hcosthg(nntg)
@@ -39,4 +39,4 @@ INTEGER  ::  it
   END DO
 !
 end subroutine trig_grav_theta
-end module trigonometry_grav_theta
+end module COCAL_ID_trigonometry_grav_theta

@@ -1,9 +1,9 @@
 ! r_coordinate for the field
 !______________________________________________
-module coordinate_grav_r
-  use phys_constant, only : nnrg, long
-  use grid_parameter, only : nrg, nrgin, rgin, rgmid, rgout, nrf, nrg_1, r_surf
-  implicit none
+module COCAL_ID_coordinate_grav_r
+use COCAL_ID_phys_constant, only : nnrg, long
+use COCAL_ID_grid_parameter, only : nrg, nrgin, rgin, rgmid, rgout, nrf, nrg_1, r_surf
+implicit none
   real(long)  :: rg(0:nnrg), rginv(0:nnrg) ! radial grid points.  inv means 1/r
   real(long)  :: hrg(nnrg), hrginv(nnrg)   ! mid points.
   real(long)  :: drg(nnrg), drginv(nnrg)   ! intervals.
@@ -12,7 +12,8 @@ subroutine grid_r
 ! Grid points of r-coordinate
 ! --- Set up of meshes  ---  ( r(1) = dr ( not the center ) )
 !
-  implicit none
+
+implicit none
   real(long)  ::  drdr, drdrinv
   real(long) :: ratrr  ! ratio between subsequent step outside rgmid (or rather nrgin). \delta_{j+1} = k \delta_{j}
   real(long) :: rvdom, ratrrb, alge, dalge, error, rdet, rdetf
@@ -104,8 +105,9 @@ subroutine grid_r_bhex(char_bh)
 ! Grid points of r-coordinate
 ! --- Set up of meshes  ---  ( r(1) = dr ( not the center ) )
 !
-  use def_bh_parameter, only : mass_pBH
-  implicit none
+
+use COCAL_ID_def_bh_parameter, only : mass_pBH
+implicit none
   real(long)  ::  drdr, drdrinv
   real(long) :: ratrr  ! ratio between subsequent step outside rgmid (or rather nrgin). \delta_{j+1} = k \delta_{j}
   real(long) :: rvdom, ratrrb, alge, dalge, error, rdet, rdetf
@@ -302,7 +304,8 @@ end subroutine grid_r_bhex
 !
 subroutine grid_r_bns
 
-  implicit none
+
+implicit none
   real(long)  ::  drdr, drdrinv
   real(long) :: ratrr  ! ratio between subsequent step outside rgmid (or rather nrgin). \delta_{j+1} = k \delta_{j}
   real(long) :: rvdom, ratrrb, alge, dalge, error, rdet, rdetf, rdet1
@@ -516,11 +519,12 @@ end subroutine grid_r_bns
 !
 subroutine grid_r_bns_const
 
-  implicit none
+
+implicit none
   real(long)  ::  drdr, drdrinv
   real(long) :: ratrr  ! ratio between subsequent step outside rgmid (or rather nrgin). \delta_{j+1} = k \delta_{j}
   real(long) :: rvdom, ratrrb, alge, dalge, error, rdet, rdetf, rdet1
-  real(long) :: rfdom, reso_min, drmin, drmininv
+  real(long) :: rfdom, reso_min, drmin, drmininv, ratrf, ratrfb
   integer    :: nrout, ir, itry, nrconst
   real(long) :: dr1, dr1inv, tolerant_val = 5.0d-14
   real(long) :: dr2, dr2inv, rgconst
@@ -633,7 +637,7 @@ do itry = 0, 3
   IF(rdet< 1.e-10) then
     WRITE(6,*) 'good coordinate itry =', itry
     WRITE(6,*) 'good coordinate GR : rdet, ratrr ', rdet, ratrr
-    WRITE(6,*) 'good coordinate FLUID : rdetf', rdetf
+    WRITE(6,*) 'good coordinate FLUID : rdetf, ratrf', rdetf, ratrf
     if (rg(0)==0.0) then
       write(6,*) "Number of constant intervals, dr, N*dr :", nrconst, drdr, nrconst*drdr
       write(6,*) "Number of non-constant intervals, rgout:", nrg - nrconst, rgout
@@ -646,7 +650,7 @@ do itry = 0, 3
   IF(rdet>=1.e-10)then
     WRITE(6,*) ' bad coordinate itry =', itry
     WRITE(6,*) ' bad coordinate GR : rdet, ratrr', rdet, ratrr
-    WRITE(6,*) ' bad coordinate FLUID : rdetf', rdetf
+    WRITE(6,*) ' bad coordinate FLUID : rdetf, ratrf', rdetf, ratrf
     if (itry.eq.3) STOP
   END IF
 end do
@@ -656,11 +660,12 @@ end subroutine grid_r_bns_const
 !
 subroutine grid_r_bqs
 
-  implicit none
+
+implicit none
   real(long)  ::  drdr, drdrinv
   real(long) :: ratrr  ! ratio between subsequent step outside rgmid (or rather nrgin). \delta_{j+1} = k \delta_{j}
   real(long) :: rvdom, ratrrb, alge, dalge, error, rdet, rdetf, rdet1
-  real(long) :: rfdom, reso_min, drmin, drmininv
+  real(long) :: rfdom, reso_min, drmin, drmininv, ratrf, ratrfb
   real(long) :: rr1, rr2, rr3, dr3
   integer    :: nrout, ir, itry, nrconst
   real(long) :: dr1, dr1inv, tolerant_val = 5.0d-14
@@ -732,13 +737,13 @@ subroutine grid_r_bqs
       IF(rdet< 1.e-10) then
         WRITE(6,*) 'good coordinate itry =', itry
         WRITE(6,*) 'good coordinate GR : rdet, ratrr ', rdet, ratrr
-        WRITE(6,*) 'good coordinate FLUID : rdetf', rdetf
+        WRITE(6,*) 'good coordinate FLUID : rdetf, ratrf', rdetf, ratrf
         exit
       end if
       IF(rdet>=1.e-10)then
         WRITE(6,*) ' bad coordinate itry =', itry
         WRITE(6,*) ' bad coordinate GR : rdet, ratrr', rdet, ratrr
-        WRITE(6,*) ' bad coordinate FLUID : rdetf', rdetf
+        WRITE(6,*) ' bad coordinate FLUID : rdetf, ratrf', rdetf, ratrf
         if (itry.eq.3) STOP
       END IF
     end do
@@ -846,13 +851,13 @@ subroutine grid_r_bqs
       IF(rdet< 1.e-10) then
         WRITE(6,*) 'good coordinate itry =', itry
         WRITE(6,*) 'good coordinate GR : rdet, ratrr ', rdet, ratrr
-        WRITE(6,*) 'good coordinate FLUID : rdetf', rdetf
+        WRITE(6,*) 'good coordinate FLUID : rdetf, ratrf', rdetf, ratrf
         exit
       end if
       IF(rdet>=1.e-10)then
         WRITE(6,*) ' bad coordinate itry =', itry
         WRITE(6,*) ' bad coordinate GR : rdet, ratrr', rdet, ratrr
-        WRITE(6,*) ' bad coordinate FLUID : rdetf', rdetf
+        WRITE(6,*) ' bad coordinate FLUID : rdetf, ratrf', rdetf, ratrf
         if (itry.eq.3) STOP
       END IF
     end do
@@ -863,9 +868,10 @@ end subroutine grid_r_bqs
 
 !
 subroutine grid_r_bht(char_bh)
-  use def_bh_parameter, only : mass_pBH
-  use def_bh_parameter, only : mass_bh, spin_bh 
-  implicit none
+
+use COCAL_ID_def_bh_parameter, only : mass_pBH
+use COCAL_ID_def_bh_parameter, only : mass_bh, spin_bh 
+implicit none
   real(long)  ::  drdr, drdrinv
   real(long) :: ratrr  ! ratio between subsequent step outside rgmid (or rather nrgin). \delta_{j+1} = k \delta_{j}
   real(long) :: rvdom, ratrrb, alge, dalge, error, rdet, rdetf
@@ -1075,4 +1081,4 @@ subroutine grid_r_bht(char_bh)
 end subroutine grid_r_bht
 !
 
-end module coordinate_grav_r
+end module COCAL_ID_coordinate_grav_r

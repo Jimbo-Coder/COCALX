@@ -1,0 +1,68 @@
+# Check that the reader is COCAL's, then build a minimal Einstein Toolkit with
+# CarpetX and run the COCAL_IDX fixture tests, only when the reader, its
+# tests, the sync tool or this CI change.
+name: COCAL_IDX fixtures
+
+on:
+  push:
+    paths:
+      - "COCAL_IDX/src/**"
+      - "COCAL_IDX/*.ccl"
+      - "COCAL_IDX/test/**"
+      - "tools/*.py"
+      - ".github/ci/**"
+      - ".github/workflows/fixtures.yml"
+  pull_request:
+    paths:
+      - "COCAL_IDX/src/**"
+      - "COCAL_IDX/*.ccl"
+      - "COCAL_IDX/test/**"
+      - "tools/*.py"
+      - ".github/ci/**"
+      - ".github/workflows/fixtures.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fixtures-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # The shared reader files must match COCAL's branch of the same name (dev,
+  # or main for every other branch).
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compare with COCAL
+        run: |
+          branch=main
+          [ "${{ github.head_ref || github.ref_name }}" = dev ] && branch=dev
+          git clone --quiet --depth 1 --branch "$branch" https://github.com/Jimbo-Coder/COCAL.git "$RUNNER_TEMP/cocal"
+          python3 tools/sync_cocal.py "$RUNNER_TEMP/cocal" --check
+
+  fixtures:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install compilers and libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gfortran cmake libopenmpi-dev openmpi-bin \
+            zlib1g-dev
+
+      # The toolkit checkout and build; only the reader is recompiled.
+      - name: Restore the Cactus build
+        uses: actions/cache@v4
+        with:
+          path: cactus-ci
+          key: cactusx-${{ hashFiles('.github/ci/cocalx.th', '.github/ci/ubuntu.cfg') }}-${{ github.sha }}
+          restore-keys: cactusx-${{ hashFiles('.github/ci/cocalx.th', '.github/ci/ubuntu.cfg') }}-
+
+      - name: Build and run the fixtures
+        run: .github/ci/run.sh cactus-ci

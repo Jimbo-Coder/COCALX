@@ -1,8 +1,9 @@
-subroutine copy_def_peos_parameter_from_mpt(impt)
-  use def_peos_parameter      !abc,abi,rhoi,qi,hi,nphase,rhoini_cgs,emdini_gcm1
-  use def_peos_parameter_mpt
-  use copy_array_static_2dto1d_mpt
-  implicit none
+subroutine COCAL_ID_copy_def_peos_parameter_from_mpt(impt)
+
+use COCAL_ID_def_peos_parameter      !abc,abi,rhoi,qi,hi,nphase,rhoini_cgs,emdini_gcm1
+use COCAL_ID_def_peos_parameter_mpt
+use COCAL_ID_copy_array_static_2dto1d_mpt
+implicit none
   integer :: i, impt
 !  
   call copy_arraystatic_2dto1d_mpt(impt, abc_   , abc,    0, nnpeos)
@@ -24,4 +25,4 @@ subroutine copy_def_peos_parameter_from_mpt(impt)
   i=0
   i=i+1; nphase = def_peos_param_int_(i,impt)
 !
-end subroutine copy_def_peos_parameter_from_mpt
+end subroutine COCAL_ID_copy_def_peos_parameter_from_mpt

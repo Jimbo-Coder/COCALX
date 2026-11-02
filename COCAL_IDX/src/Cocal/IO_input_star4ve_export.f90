@@ -1,6 +1,7 @@
-subroutine IO_input_star4ve_export(filenm,coc2cac_readformat,utf,uxf,uyf,uzf)
-  use phys_constant, only : long
-  implicit none
+subroutine COCAL_ID_IO_input_star4ve_export(filenm,coc2cac_readformat,utf,uxf,uyf,uzf)
+
+use COCAL_ID_phys_constant, only : long
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: utf(:,:,:), uxf(:,:,:), uyf(:,:,:), uzf(:,:,:)
   character(len=*) :: filenm,coc2cac_readformat
@@ -34,4 +35,4 @@ subroutine IO_input_star4ve_export(filenm,coc2cac_readformat,utf,uxf,uyf,uzf)
   end if
   close(13)
 !
-end subroutine IO_input_star4ve_export
+end subroutine COCAL_ID_IO_input_star4ve_export

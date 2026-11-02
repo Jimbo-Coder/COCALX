@@ -1,6 +1,7 @@
-subroutine IO_input_WL_grav_export_hij(filenm,coc2cac_readformat,hxxd,hxyd,hxzd,hyyd,hyzd,hzzd)
-  use phys_constant, only : long
-  implicit none
+subroutine COCAL_ID_IO_input_WL_grav_export_hij(filenm,coc2cac_readformat,hxxd,hxyd,hxzd,hyyd,hyzd,hzzd)
+
+use COCAL_ID_phys_constant, only : long
+implicit none
   integer :: irg, itg, ipg, nrtmp, nttmp, nptmp
   real(8), pointer :: hxxd(:,:,:), hxyd(:,:,:), hxzd(:,:,:), &
       &               hyyd(:,:,:), hyzd(:,:,:), hzzd(:,:,:)
@@ -39,4 +40,4 @@ subroutine IO_input_WL_grav_export_hij(filenm,coc2cac_readformat,hxxd,hxyd,hxzd,
    end if
   close(13)
 !
-end subroutine IO_input_WL_grav_export_hij
+end subroutine COCAL_ID_IO_input_WL_grav_export_hij

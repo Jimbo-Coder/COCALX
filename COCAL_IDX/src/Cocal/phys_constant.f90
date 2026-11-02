@@ -1,5 +1,5 @@
-module phys_constant
-  implicit none
+module COCAL_ID_phys_constant
+implicit none
   Integer, parameter :: long = SELECTED_REAL_KIND(15,307)
   real(long), parameter :: pi = 3.141592653589793d+0
   real(long), parameter :: g = 6.67428d-08
@@ -28,4 +28,4 @@ module phys_constant
   integer, parameter :: nnmpt = 5
 !  integer, parameter :: nmpt = 2
   integer, parameter :: nmpt = 3
-end module phys_constant
+end module COCAL_ID_phys_constant

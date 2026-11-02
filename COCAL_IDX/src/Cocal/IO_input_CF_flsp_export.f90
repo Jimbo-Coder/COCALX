@@ -1,9 +1,10 @@
-subroutine IO_input_CF_flsp_export(filenm,coc2cac_readformat,emd,vep,wxspf,wyspf,wzspf,ome,ber,radi,confpow)
-  use phys_constant, only : long, nnrg, nntg, nnpg
-  implicit none
+subroutine COCAL_ID_IO_input_CF_flsp_export(filenm,coc2cac_readformat,emd,vep,wxspf,wyspf,wzspf,ome,ber,radi,confpow,xcm,zcm)
+
+use COCAL_ID_phys_constant, only : long, nnrg, nntg, nnpg
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: emd(:,:,:), vep(:,:,:), wxspf(:,:,:), wyspf(:,:,:), wzspf(:,:,:)
-  real(8) :: ome, ber, radi, confpow, omespx, omespy, omespz
+  real(8) :: ome, ber, radi, confpow, omespx, omespy, omespz, xcm, zcm
   character(len=*) :: filenm,coc2cac_readformat
 !
 ! --- Matter
@@ -18,7 +19,8 @@ subroutine IO_input_CF_flsp_export(filenm,coc2cac_readformat,emd,vep,wxspf,wyspf
          end do
       end do
    end do
-   read(12,'(1p,6e20.12)') ome, ber, radi
+   ! Missing xcm/zcm fields become zero without consuming the following spin record.
+   read(12,'(1p,6e20.12)') ome, ber, radi, xcm, zcm
    read(12,'(1p,6e20.12)') confpow, omespx, omespy, omespz
   else if (coc2cac_readformat == "23.15") then
    do ip = 0, nptmp
@@ -29,9 +31,9 @@ subroutine IO_input_CF_flsp_export(filenm,coc2cac_readformat,emd,vep,wxspf,wyspf
          end do
       end do
    end do
-   read(12,'(1p,6e23.15)') ome, ber, radi
+   read(12,'(1p,6e23.15)') ome, ber, radi, xcm, zcm
    read(12,'(1p,6e23.15)') confpow, omespx, omespy, omespz
   end if
   close(12)
 !
-end subroutine IO_input_CF_flsp_export
+end subroutine COCAL_ID_IO_input_CF_flsp_export

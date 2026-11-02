@@ -1,6 +1,7 @@
-subroutine IO_input_CF_star_export(filenm,coc2cac_readformat,emd,rs,omef,ome,ber,radi)
-  use phys_constant, only : long, nnrg, nntg, nnpg
-  implicit none
+subroutine COCAL_ID_IO_input_CF_star_export(filenm,coc2cac_readformat,emd,rs,omef,ome,ber,radi)
+
+use COCAL_ID_phys_constant, only : long, nnrg, nntg, nnpg
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: emd(:,:,:), rs(:,:), omef(:,:,:)
   real(8) :: ome, ber, radi
@@ -38,4 +39,4 @@ subroutine IO_input_CF_star_export(filenm,coc2cac_readformat,emd,rs,omef,ome,ber
    end if
     close(12)
 !
-end subroutine IO_input_CF_star_export
+end subroutine COCAL_ID_IO_input_CF_star_export

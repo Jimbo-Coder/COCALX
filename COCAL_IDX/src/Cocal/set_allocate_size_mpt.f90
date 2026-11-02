@@ -1,15 +1,17 @@
-subroutine set_allocate_size_mpt
-  use phys_constant, only : nmpt
-  use grid_parameter, only : nrg, ntg, npg, nlg,&
-                           & nrf, ntf, npf, nlf
+subroutine COCAL_ID_set_allocate_size_mpt
+
+use COCAL_ID_phys_constant, only : nmpt
+use COCAL_ID_grid_parameter, only : nrg, ntg, npg, nlg,&
+&                                   nrf, ntf, npf, nlf
 !
-  implicit none
+
+implicit none
   integer :: nrgmax=0, ntgmax=0, npgmax=0, nlgmax=0,&
            & nrfmax=0, ntfmax=0, npfmax=0, nlfmax=0
   integer :: impt
 !
   do impt = 1, nmpt
-    call copy_grid_parameter_from_mpt(impt)
+    call COCAL_ID_copy_grid_parameter_from_mpt(impt)
 !
     nrgmax = max(nrgmax, nrg)
     ntgmax = max(ntgmax, ntg)
@@ -30,4 +32,4 @@ subroutine set_allocate_size_mpt
   npf =npfmax
   nlf =nlfmax
 !
-end subroutine set_allocate_size_mpt
+end subroutine COCAL_ID_set_allocate_size_mpt

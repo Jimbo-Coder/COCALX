@@ -1,0 +1,52 @@
+# Minimal Einstein Toolkit with CarpetX for the COCAL_IDX fixtures (test/),
+# from the sources of thornlists/asterx_subcycle.th: CarpetX from its
+# development branch, the rest from ET_2026_05. run.sh links this repository
+# in as arrangements/COCALX.
+!CRL_VERSION = 1.0
+!DEFINE ROOT = Cactus
+!DEFINE ARR  = $ROOT/arrangements
+!DEFINE ET_RELEASE = ET_2026_05
+
+!TARGET   = $ROOT
+!TYPE     = git
+!URL      = https://bitbucket.org/cactuscode/cactus.git
+!REPO_BRANCH = $ET_RELEASE
+!NAME     = flesh
+!CHECKOUT = .clang-format CONTRIBUTORS COPYRIGHT doc lib Makefile README.md src
+
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://bitbucket.org/cactuscode/cactusbase.git
+!REPO_BRANCH = $ET_RELEASE
+!REPO_PATH= $2
+!CHECKOUT =
+CactusBase/Fortran
+CactusBase/IOUtil
+
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://github.com/lwJi/CarpetX.git
+!REPO_BRANCH = dev
+!REPO_PATH= $2
+!CHECKOUT =
+CarpetX/ADMBaseX
+CarpetX/Algo
+CarpetX/Arith
+CarpetX/CarpetX
+CarpetX/CarpetXRegrid
+CarpetX/CoordinatesX
+CarpetX/HydroBaseX
+CarpetX/Loop
+
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://github.com/EinsteinToolkit/$1-$2
+!REPO_BRANCH = $ET_RELEASE
+!REPO_PATH = ../$1-$2
+!CHECKOUT =
+ExternalLibraries/AMReX
+ExternalLibraries/Boost
+ExternalLibraries/MPI
+ExternalLibraries/NSIMD
+ExternalLibraries/yaml_cpp
+ExternalLibraries/zlib

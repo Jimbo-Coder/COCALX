@@ -1,11 +1,11 @@
 !  trigonometric functions in phi coordinate
 !______________________________________________
-MODULE trigonometry_grav_phi
-  use phys_constant, only  : nnpg, long
-  use grid_parameter, only : npg, nlg
-  use coordinate_grav_phi, only : phig, hphig
-  use make_array_2d
-  implicit none
+MODULE COCAL_ID_trigonometry_grav_phi
+use COCAL_ID_phys_constant, only  : nnpg, long
+use COCAL_ID_grid_parameter, only : npg, nlg
+use COCAL_ID_coordinate_grav_phi, only : phig, hphig
+use COCAL_ID_make_array_2d
+implicit none
   real(long) ::  sinphig(0:nnpg), cosphig(0:nnpg)
   real(long) :: hsinphig(nnpg),  hcosphig(nnpg)
   real(long), pointer :: sinmpg(:,:), cosmpg(:,:)
@@ -13,14 +13,16 @@ MODULE trigonometry_grav_phi
 contains
 ! Subroutine
 subroutine allocate_trig_grav_mphi
-  implicit none
+
+implicit none
   call alloc_array2d(sinmpg, 0, nlg, 0, npg)
   call alloc_array2d(cosmpg, 0, nlg, 0, npg)
   call alloc_array2d(hsinmpg, 0, nlg, 1, npg)
   call alloc_array2d(hcosmpg, 0, nlg, 1, npg)
 end subroutine allocate_trig_grav_mphi
 subroutine trig_grav_phi
-  IMPLICIT NONE
+
+IMPLICIT NONE
   INTEGER     ::  ip, nn
   Real(long)  ::  fnn
   DO ip  = 0, npg
@@ -42,4 +44,4 @@ subroutine trig_grav_phi
     END DO
   END DO
 end subroutine trig_grav_phi
-end module trigonometry_grav_phi
+end module COCAL_ID_trigonometry_grav_phi

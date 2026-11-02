@@ -1,14 +1,15 @@
-subroutine peos_q2hprho(q,h,pre,rho,ened)
+subroutine COCAL_ID_peos_q2hprho(q,h,pre,rho,ened)
 !
-  use def_peos_parameter	!abc,abi,rhoi,qi,hi,nphase
-  implicit none
+
+use COCAL_ID_def_peos_parameter	!abc,abi,rhoi,qi,hi,nphase
+implicit none
 !
   real(8), intent(inout) :: q
   real(8), intent(out)   :: h, pre, rho
   real(8)                :: hin, qin, abin, abct, fac1, fac2, fack, small, ened
   integer                :: iphase
 !
-  call peos_lookup(q, qi, iphase)
+  call COCAL_ID_peos_lookup(q, qi, iphase)
   hin  = hi(iphase)
   qin  = qi(iphase)
   abin = abi(iphase)
@@ -26,4 +27,4 @@ subroutine peos_q2hprho(q,h,pre,rho,ened)
   rho = fack*q**fac1
   ened = rho*h - pre
 !
-end subroutine peos_q2hprho
+end subroutine COCAL_ID_peos_q2hprho

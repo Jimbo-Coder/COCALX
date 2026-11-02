@@ -1,6 +1,7 @@
-subroutine IO_input_grav_export_Kij(filenm,kxx,kxy,kxz,kyy,kyz,kzz)
-  use phys_constant, only : long
-  implicit none
+subroutine COCAL_ID_IO_input_grav_export_Kij(filenm,kxx,kxy,kxz,kyy,kyz,kzz)
+
+use COCAL_ID_phys_constant, only : long
+implicit none
   integer :: irg, itg, ipg, nrtmp, nttmp, nptmp
   real(8), pointer :: kxx(:,:,:), kxy(:,:,:), kxz(:,:,:), &
       &               kyy(:,:,:), kyz(:,:,:), kzz(:,:,:)
@@ -24,4 +25,4 @@ subroutine IO_input_grav_export_Kij(filenm,kxx,kxy,kxz,kyy,kyz,kzz)
   end do
   close(13)
 !
-end subroutine IO_input_grav_export_Kij
+end subroutine COCAL_ID_IO_input_grav_export_Kij

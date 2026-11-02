@@ -1,6 +1,6 @@
-module def_matter_parameter
-  use phys_constant, only : long
-  implicit none
+module COCAL_ID_def_matter_parameter
+use COCAL_ID_phys_constant, only : long
+implicit none
   real(long)           ::  pinx, emdc
   real(long)           ::  ome, ber, radi
   character(len=2)     ::  ROT_LAW
@@ -14,4 +14,4 @@ module def_matter_parameter
   real(long)           ::  omespx, omespy, omespz, confpow
 !  the following are used for eccentricity reduction
   real(long)           ::  velx, delome, delvel
-end module def_matter_parameter
+end module COCAL_ID_def_matter_parameter

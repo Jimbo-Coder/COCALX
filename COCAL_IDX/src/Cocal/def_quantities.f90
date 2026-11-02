@@ -1,6 +1,6 @@
-module def_quantities
-  use phys_constant, only : long
-  implicit none
+module COCAL_ID_def_quantities
+use COCAL_ID_phys_constant, only : long
+implicit none
   real(long) :: admmass, komarmass, komarmass_nc, restmass, propermass, angmom
   real(long) :: admmass_asymp, komarmass_asymp, angmom_asymp, admmom_asymp(3)
   real(long) :: angmom_asympto(3), anmo(3)
@@ -44,4 +44,4 @@ module def_quantities
   real(long) :: dt1Itf(1:3,1:3), dt2Itf(1:3,1:3), dt3Itf(1:3,1:3)
   real(long) :: LGW, dJdt(1:3), hplus, hcross
 !
-end module def_quantities
+end module COCAL_ID_def_quantities

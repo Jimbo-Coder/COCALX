@@ -1,12 +1,13 @@
-module grid_parameter_binary_excision
-  use phys_constant, only : long
-  implicit none
+module COCAL_ID_grid_parameter_binary_excision
+use COCAL_ID_phys_constant, only : long
+implicit none
   integer :: ex_nrg, ex_ndis ! size of excision radius
   real(long) :: ex_radius, ex_rgin, ex_rgmid, ex_rgout
 contains
 subroutine read_parameter_binary_excision
-  use grid_parameter, only : nrf
-  implicit none
+
+use COCAL_ID_grid_parameter, only : nrf
+implicit none
   open(1,file='bin_ex_par.dat',status='old')
   read(1,'(2i5)') ex_nrg, ex_ndis
   close(1)
@@ -17,12 +18,13 @@ subroutine read_parameter_binary_excision
 end subroutine read_parameter_binary_excision
 !
 subroutine calc_parameter_binary_excision
-  use grid_parameter, only : nrf, nrg
-  use coordinate_grav_r, only : rg, drg
-  use coordinate_grav_theta
-  use coordinate_grav_phi
-  use def_binary_parameter, only : sepa, dis
-  implicit none
+
+use COCAL_ID_grid_parameter, only : nrf, nrg
+use COCAL_ID_coordinate_grav_r, only : rg, drg
+use COCAL_ID_coordinate_grav_theta
+use COCAL_ID_coordinate_grav_phi
+use COCAL_ID_def_binary_parameter, only : sepa, dis
+implicit none
   integer :: irg
   sepa = 2.0d0*rg(ex_nrg + ex_ndis)
   dis  =       rg(ex_nrg + ex_ndis)
@@ -42,12 +44,13 @@ subroutine calc_parameter_binary_excision
 end subroutine calc_parameter_binary_excision
 !
 subroutine IO_printout_grid_data
-  use grid_parameter, only : nrf, nrg
-  use coordinate_grav_r, only : rg, drg
-  use coordinate_grav_theta
-  use coordinate_grav_phi
-  use def_binary_parameter, only : sepa, dis
-  implicit none
+
+use COCAL_ID_grid_parameter, only : nrf, nrg
+use COCAL_ID_coordinate_grav_r, only : rg, drg
+use COCAL_ID_coordinate_grav_theta
+use COCAL_ID_coordinate_grav_phi
+use COCAL_ID_def_binary_parameter, only : sepa, dis
+implicit none
   integer :: irg
   open(1,file='grid_data.dat',status='unknown')
 !  write(1,'(a5,1p,e20.12)') 'sepa=', sepa
@@ -88,12 +91,13 @@ subroutine IO_printout_grid_data
 end subroutine IO_printout_grid_data
 !
 subroutine IO_printout_grid_data_mpt(impt)
-  use grid_parameter
-  use coordinate_grav_r
-  use coordinate_grav_theta
-  use coordinate_grav_phi
-  use def_binary_parameter
-  implicit none
+
+use COCAL_ID_grid_parameter
+use COCAL_ID_coordinate_grav_r
+use COCAL_ID_coordinate_grav_theta
+use COCAL_ID_coordinate_grav_phi
+use COCAL_ID_def_binary_parameter
+implicit none
   integer :: irg, impt
   character(len=1) :: np(5) = (/'1', '2', '3', '4', '5'/)
 
@@ -172,4 +176,4 @@ subroutine IO_printout_grid_data_mpt(impt)
  
 end subroutine IO_printout_grid_data_mpt
 
-end module grid_parameter_binary_excision
+end module COCAL_ID_grid_parameter_binary_excision

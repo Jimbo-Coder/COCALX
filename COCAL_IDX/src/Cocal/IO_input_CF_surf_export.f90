@@ -1,6 +1,7 @@
-subroutine IO_input_CF_surf_export(filenm,coc2cac_readformat,rs)
-  use phys_constant, only : long, nnrg, nntg, nnpg
-  implicit none
+subroutine COCAL_ID_IO_input_CF_surf_export(filenm,coc2cac_readformat,rs)
+
+use COCAL_ID_phys_constant, only : long, nnrg, nntg, nnpg
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer ::  rs(:,:)
   character(len=*) :: filenm,coc2cac_readformat
@@ -24,4 +25,4 @@ subroutine IO_input_CF_surf_export(filenm,coc2cac_readformat,rs)
   end if
   close(15)
 !
-end subroutine IO_input_CF_surf_export
+end subroutine COCAL_ID_IO_input_CF_surf_export

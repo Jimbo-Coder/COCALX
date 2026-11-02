@@ -1,6 +1,7 @@
-subroutine IO_input_grav_export_Ai(filenm,coc2cac_readformat,va,vaxd,vayd,vazd)
-  use phys_constant, only : long
-  implicit none
+subroutine COCAL_ID_IO_input_grav_export_Ai(filenm,coc2cac_readformat,va,vaxd,vayd,vazd)
+
+use COCAL_ID_phys_constant, only : long
+implicit none
   integer :: ir, it, ip, nrtmp, nttmp, nptmp
   real(8), pointer :: va(:,:,:), vaxd(:,:,:), vayd(:,:,:), vazd(:,:,:)
   character(len=*) :: filenm,coc2cac_readformat
@@ -34,4 +35,4 @@ subroutine IO_input_grav_export_Ai(filenm,coc2cac_readformat,va,vaxd,vayd,vazd)
    end if
   close(13)
 !
-end subroutine IO_input_grav_export_Ai
+end subroutine COCAL_ID_IO_input_grav_export_Ai

@@ -1,7 +1,8 @@
-subroutine copy_grid_parameter_to_mpt(impt)
-  use grid_parameter
-  use grid_parameter_mpt
-  implicit none
+subroutine COCAL_ID_copy_grid_parameter_to_mpt(impt)
+
+use COCAL_ID_grid_parameter
+use COCAL_ID_grid_parameter_mpt
+implicit none
   integer :: i, impt
 !  
   i=0
@@ -85,4 +86,4 @@ subroutine copy_grid_parameter_to_mpt(impt)
   i=0
   i=i+1; surf_param_char1_(i,impt) = sw_eos
 !
-end subroutine copy_grid_parameter_to_mpt
+end subroutine COCAL_ID_copy_grid_parameter_to_mpt

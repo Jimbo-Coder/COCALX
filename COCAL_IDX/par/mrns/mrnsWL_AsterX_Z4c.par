@@ -82,11 +82,10 @@ CarpetX::dtfac = 0.25
 ODESolvers::verbose = no
 ODESolvers::method = "RK4"
 
-COCAL_IDX::coc2cac_dir_path_ID = "/anvil/projects/x-mca99s008/coc2cac_IDs/mrns/work_area_RNS_Mpa0.9_LCp1.7_LCf0.00_M1.25_SE3_df112"
-COCAL_IDX::coc2cac_readpot = "True"
-COCAL_IDX::coc2cac_rnstype = "MRNS_WL"
-COCAL_IDX::coc2cac_readformat = "20.12"
-COCAL_IDX::verbose = "False"
+COCAL_IDX::COCAL_ID_PathToID = "/anvil/projects/x-mca99s008/coc2cac_IDs/mrns/work_area_RNS_Mpa0.9_LCp1.7_LCf0.00_M1.25_SE3_df112"
+COCAL_IDX::COCAL_ID_read_magnetic_potential = "True"
+COCAL_IDX::COCAL_ID_rnstype = "MRNS_WL"
+COCAL_IDX::COCAL_ID_verbose = "False"
 
 BoxInBox::num_regions = 1
 BoxInBox::shape_1 = "cube"

@@ -1,6 +1,7 @@
-subroutine invhij_WL_export(hxxd,hxyd,hxzd,hyyd,hyzd,hzzd,hxxu,hxyu,hxzu,hyyu,hyzu,hzzu)
-  use grid_parameter, only : nrg, ntg, npg
-  implicit none
+subroutine COCAL_ID_invhij_WL_export(hxxd,hxyd,hxzd,hyyd,hyzd,hzzd,hxxu,hxyu,hxzu,hyyu,hyzu,hzzu)
+
+use COCAL_ID_grid_parameter, only : nrg, ntg, npg
+implicit none
   real(8), pointer :: hxxd(:,:,:), hxyd(:,:,:), hxzd(:,:,:), &
       &               hyyd(:,:,:), hyzd(:,:,:), hzzd(:,:,:), &
       &               hxxu(:,:,:), hxyu(:,:,:), hxzu(:,:,:), &
@@ -66,4 +67,4 @@ subroutine invhij_WL_export(hxxd,hxyd,hxzd,hyyd,hyzd,hzzd,hxxu,hxyu,hxzu,hyyu,hy
     end do
   end do
 !
-end subroutine invhij_WL_export
+end subroutine COCAL_ID_invhij_WL_export

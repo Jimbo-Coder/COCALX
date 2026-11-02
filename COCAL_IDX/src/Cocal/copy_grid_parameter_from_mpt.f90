@@ -1,8 +1,9 @@
-subroutine copy_grid_parameter_from_mpt(impt)
-  use grid_parameter_mpt
-  use grid_parameter
-  use def_quantities
-  implicit none
+subroutine COCAL_ID_copy_grid_parameter_from_mpt(impt)
+
+use COCAL_ID_grid_parameter_mpt
+use COCAL_ID_grid_parameter
+use COCAL_ID_def_quantities
+implicit none
   integer :: i, impt
 !
   i=0
@@ -86,4 +87,4 @@ subroutine copy_grid_parameter_from_mpt(impt)
   i=0
   i=i+1; sw_eos = surf_param_char1_(i,impt)
 !
-end subroutine copy_grid_parameter_from_mpt
+end subroutine COCAL_ID_copy_grid_parameter_from_mpt
