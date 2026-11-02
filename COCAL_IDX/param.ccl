@@ -1,4 +1,4 @@
-# Parameter definitions for thorn COCAL_IDX: COCAL_ID's (tools/sync_cocal.py).
+# Parameter definitions for thorn COCAL_IDX
 # RNS(Rotating Neutron Star) , BNS(Rotating Binary Neutron Star) 
 
 
@@ -28,12 +28,12 @@ EXTENDS keyword initial_hydro
 
 private:
 
-CCTK_STRING COCAL_ID_PathToID "Path to Cocal initial data"
+CCTK_STRING COCAL_IDX_PathToID "Path to Cocal initial data"
 {
   ".+" :: "Pathname"
 } "."
 
-CCTK_KEYWORD COCAL_ID_rnstype "Type of initial data, currently"
+CCTK_KEYWORD COCAL_IDX_rnstype "Type of initial data, currently"
 {
   "RNS_WL" :: "Waveless"
   "RNS_CF" :: "Conformally Flat"
@@ -41,60 +41,60 @@ CCTK_KEYWORD COCAL_ID_rnstype "Type of initial data, currently"
 } "RNS_CF"
 
 
-CCTK_REAL COCAL_ID_cen_x1 "X Position of BNS star 1 for grid centers and diagnostics"
+CCTK_REAL COCAL_IDX_cen_x1 "X Position of BNS star 1 for grid centers and diagnostics"
 {
   *:* :: ""
 } 0.0
 
-CCTK_REAL COCAL_ID_cen_y1 "Y Position of BNS star 1 for grid centers and diagnostics"
+CCTK_REAL COCAL_IDX_cen_y1 "Y Position of BNS star 1 for grid centers and diagnostics"
 {
   *:* :: ""
 } 0.0
 
-CCTK_REAL COCAL_ID_cen_z1 "Z Position of BNS star 1 for grid centers and diagnostics"
+CCTK_REAL COCAL_IDX_cen_z1 "Z Position of BNS star 1 for grid centers and diagnostics"
 {
   *:* :: ""
 } 0.0
 
-CCTK_REAL COCAL_ID_cen_x2 "X Position of BNS star 2 for grid centers and diagnostics"
+CCTK_REAL COCAL_IDX_cen_x2 "X Position of BNS star 2 for grid centers and diagnostics"
 {
   *:* :: ""
 } 0.0
 
-CCTK_REAL COCAL_ID_cen_y2 "Y Position of BNS star 2 for grid centers and diagnostics"
+CCTK_REAL COCAL_IDX_cen_y2 "Y Position of BNS star 2 for grid centers and diagnostics"
 {
   *:* :: ""
 } 0.0
 
-CCTK_REAL COCAL_ID_cen_z2 "Z Position of BNS star 2 for grid centers and diagnostics"
+CCTK_REAL COCAL_IDX_cen_z2 "Z Position of BNS star 2 for grid centers and diagnostics"
 {
   *:* :: ""
 } 0.0
 
-CCTK_BOOLEAN COCAL_ID_read_magnetic_potential "Whether MRNS_WL reads magnetic potentials instead of the Faraday tensor"
+CCTK_BOOLEAN COCAL_IDX_read_magnetic_potential "Whether MRNS_WL reads magnetic potentials instead of the Faraday tensor"
 {
 
 } "True"
 
-CCTK_BOOLEAN COCAL_ID_read_tabulated_eos "Read tabulated EOS data when converting COCAL enthalpy to hydro variables"
+CCTK_BOOLEAN COCAL_IDX_read_tabulated_eos "Read tabulated EOS data when converting COCAL enthalpy to hydro variables"
 {
 } "False"
 
-CCTK_BOOLEAN COCAL_ID_verbose "Enable verbose COCAL reader logging"
+CCTK_BOOLEAN COCAL_IDX_verbose "Enable verbose COCAL reader logging"
 {
 } "False"
 
 
-CCTK_REAL COCAL_ID_ecc_cor_velx "X velocity of the CoM"
+CCTK_REAL COCAL_IDX_ecc_cor_velx "X velocity of the CoM"
 {
   *:* :: ""
 } 0.0
 
-CCTK_BOOLEAN COCAL_ID_bns_xunit "Use the BNS xunit velocity prescription instead of radial expansion"
+CCTK_BOOLEAN COCAL_IDX_bns_xunit "Use the BNS xunit velocity prescription instead of radial expansion"
 {
 } "False"
 
 # Known MPI failure modes and workarounds: src/cocal_id_node_shared.c.
-CCTK_BOOLEAN COCAL_ID_share_node_memory "Share the COCAL arrays and spline among the MPI ranks of a node (MPI-3 shared memory); no gives every rank a private copy"
+CCTK_BOOLEAN COCAL_IDX_share_node_memory "Share the COCAL arrays and spline among the MPI ranks of a node (MPI-3 shared memory); no gives every rank a private copy"
 {
 } "yes"

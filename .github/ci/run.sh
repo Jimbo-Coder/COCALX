@@ -11,10 +11,14 @@ ci=$repo/.github/ci
 work=$(mkdir -p "${1:-cactus-ci}" && cd "${1:-cactus-ci}" && pwd)
 cd "$work"
 
+# A cached checkout is updated to the current development branches; make then
+# recompiles only what changed.
 if [ ! -d Cactus/src ]; then
-  curl -fsSL -o GetComponents https://raw.githubusercontent.com/gridaphobe/CRL/ET_2026_05/GetComponents
+  curl -fsSL -o GetComponents https://raw.githubusercontent.com/gridaphobe/CRL/master/GetComponents
   chmod +x GetComponents
   ./GetComponents --parallel "$ci/cocalx.th"
+else
+  ./GetComponents --update --parallel "$ci/cocalx.th"
 fi
 ln -sfn "$repo" Cactus/arrangements/COCALX
 { grep -E '^[A-Za-z]+/[A-Za-z0-9_]+' "$ci/cocalx.th"; echo COCALX/COCAL_IDX; } > ThornList
