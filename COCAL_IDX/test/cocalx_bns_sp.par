@@ -10,10 +10,13 @@ Cactus::cctk_show_schedule = "no"
 
 ActiveThorns = "
   ADMBaseX
+  AsterMasks
+  AsterX
   CarpetX
   CoordinatesX
   HydroBaseX
   IOUtil
+  TmunuBaseX
   COCAL_IDX
 "
 
@@ -52,6 +55,9 @@ CarpetX::ghost_size = 3
 CarpetX::max_num_levels = 1
 CarpetX::regrid_every = 1280000
 CarpetX::dtfac = 0.5
+
+AsterX::zero_psi = "no"
+AsterX::update_tmunu = "no"
 
 COCAL_IDX::COCAL_ID_PathToID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/bns_sp"
 COCAL_IDX::COCAL_ID_read_magnetic_potential = "False"

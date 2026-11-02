@@ -1,0 +1,2 @@
+# 1:iteration	2:time	3:asterx::avec_x.min	4:asterx::avec_x.max	5:asterx::avec_x.sum	6:asterx::avec_x.avg	7:asterx::avec_x.stddev	8:asterx::avec_x.volume	9:asterx::avec_x.L1norm	10:asterx::avec_x.L2norm	11:asterx::avec_x.maxabs
+0	0.0000000000000000e+00	-1.0128243527018506e-02	1.0128243526978572e-02	-1.5863417350547859e-13	-1.9829271688184824e-14	6.0458957761349436e-03	8.0000000000000000e+00	4.9428065231890642e-03	6.0458957761349436e-03	1.0128243527018506e-02

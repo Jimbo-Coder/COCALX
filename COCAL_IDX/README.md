@@ -2,7 +2,8 @@
 The COCAL initial-data reader for CarpetX: the reader of the Carpet thorn
 COCAL_ID ([Jimbo-Coder/COCAL](https://github.com/Jimbo-Coder/COCAL)), with the
 same parameters and the same values at the same points. Branches match COCAL's:
-main has RNS, MRNS and BNS, dev adds the black-hole IDs.
+main has RNS, MRNS and BNS, dev adds the black-hole IDs, and AsterX-Msup is
+main with AsterX's vector potential set as well.
 
 Only the CarpetX driver is this repository's own: `src/cocal_id_grid.F90`,
 `src/cocal_id_set_data.cxx`, the ccl files but `param.ccl`, the fixtures and the
@@ -24,6 +25,15 @@ set then; ADMBaseX's `initial_lapse` and `initial_shift` run after it and
 replace COCAL's lapse and shift unless they are `"Cocal"`. The fluid is set in
 `HydroBaseX_InitialData`. CarpetX enters the initial bin again for every level
 it adds; the data are read once and freed at `CPINITIAL`.
+
+## AsterX (this branch)
+
+AsterX-Msup also sets AsterX's vector potential, so COCAL_IDX inherits AsterX
+here and needs it active: `Avec_x/y/z` are HydroBaseX's `Avecx/y/z` (the same
+edge centrings) and `Psi` = sqrt(det g) Aphi at the vertices, from
+`src/cocal_id_set_asterx.cxx`; all zero unless MRNS_WL data give the potential.
+The reader is main's, which tools/sync_cocal.py checks against COCAL main.
+`test/cocalx_mrns_wl_asterx` covers the handoff.
 
 ## Parameters
 

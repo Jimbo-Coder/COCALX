@@ -3,7 +3,8 @@
 # repository as the COCALX arrangement, and run the COCAL_IDX fixture tests.
 # Also used by hand:
 #   [JOBS=n] [OPTIONS=optionlist] .github/ci/run.sh [work directory, default ./cactus-ci]
-# Needs git, gcc, g++, gfortran, make, cmake, perl, python3, OpenMPI and zlib.
+# Needs git, gcc, g++, gfortran, make, cmake, perl, python3, OpenMPI, zlib and
+# HDF5.
 set -euo pipefail
 
 repo=$(cd "$(dirname "$0")/../.." && pwd)

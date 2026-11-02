@@ -1,4 +1,4 @@
 # Main make.code.defn file for thorn COCAL_IDX
 
 # Source files in this directory; COCAL_ID_master.F90 includes the reader.
-SRCS = COCAL_ID_master.F90 cocal_id_node_shared.c cocal_id_set_data.cxx
+SRCS = COCAL_ID_master.F90 cocal_id_node_shared.c cocal_id_set_data.cxx cocal_id_set_asterx.cxx

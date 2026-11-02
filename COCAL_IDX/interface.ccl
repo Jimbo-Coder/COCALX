@@ -1,5 +1,6 @@
 # Interface definition for thorn COCAL_IDX
 implements: COCAL_IDX
-inherits: ADMBaseX HydroBaseX
+# AsterX-Msup: also sets AsterX's vector potential (cocal_id_set_asterx.cxx).
+inherits: ADMBaseX HydroBaseX AsterX
 
 USES INCLUDE HEADER: loop.hxx

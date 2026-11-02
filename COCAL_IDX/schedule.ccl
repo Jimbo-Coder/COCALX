@@ -29,6 +29,14 @@ if (CCTK_Equals(initial_data, "CocalRNS") || CCTK_Equals(initial_data, "CocalBNS
          WRITES: HydroBaseX::Bvec(everywhere) HydroBaseX::Avecx(everywhere)
          WRITES: HydroBaseX::Avecy(everywhere) HydroBaseX::Avecz(everywhere)
       } "Interpolate the COCAL matter onto the CarpetX grid"
+
+      SCHEDULE COCAL_ID_set_asterx IN HydroBaseX_InitialData AFTER COCAL_ID_set_hydro
+      {
+         LANG: C
+         READS: HydroBaseX::Avecx(everywhere) HydroBaseX::Avecy(everywhere) HydroBaseX::Avecz(everywhere)
+         WRITES: AsterX::Avec_x(everywhere) AsterX::Avec_y(everywhere) AsterX::Avec_z(everywhere)
+         WRITES: AsterX::Psi(everywhere)
+      } "Set AsterX's vector potential from the COCAL data"
    }
 
    SCHEDULE COCAL_ID_free_data AT CPINITIAL

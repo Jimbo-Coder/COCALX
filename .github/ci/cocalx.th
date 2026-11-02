@@ -1,7 +1,7 @@
-# Minimal Einstein Toolkit with CarpetX for the COCAL_IDX fixtures (test/),
-# from the sources of thornlists/asterx_subcycle.th: CarpetX from its
-# development branch, the rest from ET_2026_05. run.sh links this repository
-# in as arrangements/COCALX.
+# Minimal Einstein Toolkit with CarpetX and AsterX for the COCAL_IDX fixtures
+# (test/), from the sources of thornlists/asterx_subcycle.th: CarpetX and
+# AsterX from their development branches, the rest from ET_2026_05. run.sh
+# links this repository in as arrangements/COCALX.
 !CRL_VERSION = 1.0
 !DEFINE ROOT = Cactus
 !DEFINE ARR  = $ROOT/arrangements
@@ -37,6 +37,20 @@ CarpetX/CarpetXRegrid
 CarpetX/CoordinatesX
 CarpetX/HydroBaseX
 CarpetX/Loop
+CarpetX/TmunuBaseX
+
+!TARGET   = $ARR
+!TYPE     = git
+!URL      = https://github.com/EinsteinToolkit/AsterX.git
+!REPO_BRANCH = dev
+!REPO_PATH= $2
+!CHECKOUT =
+AsterX/AsterMasks
+AsterX/AsterUtils
+AsterX/AsterX
+AsterX/Con2PrimFactory
+AsterX/EOSX
+AsterX/ReconX
 
 !TARGET   = $ARR
 !TYPE     = git
@@ -46,6 +60,7 @@ CarpetX/Loop
 !CHECKOUT =
 ExternalLibraries/AMReX
 ExternalLibraries/Boost
+ExternalLibraries/HDF5
 ExternalLibraries/MPI
 ExternalLibraries/NSIMD
 ExternalLibraries/yaml_cpp

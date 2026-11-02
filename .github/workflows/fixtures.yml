@@ -54,7 +54,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends gfortran cmake libopenmpi-dev openmpi-bin \
-            zlib1g-dev
+            zlib1g-dev libhdf5-dev
 
       # The toolkit checkout and build; only the reader is recompiled.
       - name: Restore the Cactus build
