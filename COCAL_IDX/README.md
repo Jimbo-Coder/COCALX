@@ -56,7 +56,8 @@ correction), and `COCAL_IDX_share_node_memory`.
    `./GetComponents --root {dir} thornlists/asterx_subcycle.th`
 2. Configure simfactory (machine, option list, run and submit scripts) and
    compile with GNU make 4 or later (`gmake` on macOS): `./simfactory/bin/sim build {config} --thornlist thornlists/asterx_subcycle.th`
-3. Start from an example in `par/` and set `COCAL_IDX::COCAL_IDX_PathToID` and,
+3. Generate a parfile with [tools/generate_parfile.py](../tools/README.md), or
+   start from an example in `par/` and set `COCAL_IDX::COCAL_IDX_PathToID` and,
    for RNS, `COCAL_IDX::COCAL_IDX_rnstype` to match the ID. Single-layer
    RNS IDs (K123.6, CF or WL) are at
    https://uofi.box.com/s/gbamn61wxuhh5iw6dxte1m1bzrgtl0al.
