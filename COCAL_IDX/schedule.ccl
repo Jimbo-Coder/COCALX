@@ -5,9 +5,8 @@ if (CCTK_Equals(initial_data, "CocalRNS") || CCTK_Equals(initial_data, "CocalBNS
     CCTK_Equals(initial_data, "CocalBBHT"))
 {
    # Before the ID groups, which are inside ODESolvers_Initial when that
-   # thorn is active; ADMBaseX's initial_lapse and initial_shift then replace
-   # COCAL's lapse and shift unless they are "Cocal". The read is done once,
-   # though CarpetX enters the initial bin again for every level it adds.
+   # thorn is active. The read is done once, though CarpetX enters the
+   # initial bin again for every level it adds.
    SCHEDULE COCAL_ID_read_data AT INITIAL BEFORE (ODESolvers_Initial HydroBaseX_InitialData)
    {
       LANG: FORTRAN
@@ -18,7 +17,12 @@ if (CCTK_Equals(initial_data, "CocalRNS") || CCTK_Equals(initial_data, "CocalBNS
    {
       LANG: C
       WRITES: ADMBaseX::metric(everywhere) ADMBaseX::curv(everywhere)
-      WRITES: ADMBaseX::lapse(everywhere) ADMBaseX::shift(everywhere)
+      if (CCTK_Equals(initial_lapse, "Cocal")) {
+         WRITES: ADMBaseX::lapse(everywhere)
+      }
+      if (CCTK_Equals(initial_shift, "Cocal")) {
+         WRITES: ADMBaseX::shift(everywhere)
+      }
    } "Interpolate the COCAL metric onto the CarpetX grid"
 
    if (CCTK_Equals(initial_hydro, "Cocal"))

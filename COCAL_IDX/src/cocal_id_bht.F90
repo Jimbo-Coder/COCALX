@@ -79,7 +79,7 @@ subroutine COCAL_ID_read_bht(dir)
   associate(h => cocal_holes(1))
     if (h%rh <= rg(0)) call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_ID BHT: the fill radius must exceed the excision radius.")
     if (h%dr <= 0.0d0) call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_ID BHT: the fill sample spacing must be positive.")
-    if (COCAL_ID_verbose == 1) then
+    if (COCAL_IDX_verbose == 1) then
       write(msg, '(a,1p,4e20.12)') "COCAL_ID BHT radii (COCAL units) excision, fill, horizon, ring: ", &
         rg(0), h%rh, r_eh, abs(spin_bh)
       call CCTK_INFO(trim(msg))

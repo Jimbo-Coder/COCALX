@@ -167,7 +167,7 @@ contains
     if (constants(2, 1)+constants(2, 2) >= constants(3, 1)) then
       call fail('COCAL_ID BBH: overlapping BH excisions'); return
     end if
-    ! Same interior/outer patch split used by COCAL_ID's BNS reader.
+    ! Same interior/outer patch split used by the BNS reader.
     associate(p1 => cocal_metric%patch(1), p2 => cocal_metric%patch(2))
       cocal_metric%rr3 = 0.7d0*min(p1%rg(p1%nr)-p1%dis, p2%rg(p2%nr)-p2%dis)
     end associate

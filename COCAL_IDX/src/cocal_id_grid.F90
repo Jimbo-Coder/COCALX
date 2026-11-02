@@ -1,6 +1,5 @@
-! The CarpetX grid: the values at one point, for the C++ loops of
-! cocal_id_set_data.cxx. Included by COCAL_ID_master.F90, which is the same in
-! COCAL (Carpet); only this file, the driver's, differs.
+! The values at one point, for the C++ loops of cocal_id_set_data.cxx.
+! Included by COCAL_ID_master.F90.
 
 ! The ADMBaseX and HydroBaseX values at (x,y,z): adm = alpha, beta^i, g_ij,
 ! K_ij and matter = rho, press, eps, v^i, A_i, B^i, Aphi. ok = 0 outside the

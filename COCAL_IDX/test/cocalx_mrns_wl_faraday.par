@@ -53,10 +53,10 @@ CarpetX::max_num_levels = 1
 CarpetX::regrid_every = 1280000
 CarpetX::dtfac = 0.5
 
-COCAL_IDX::COCAL_ID_PathToID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/mrns_wl"
-COCAL_IDX::COCAL_ID_rnstype = "MRNS_WL"
-COCAL_IDX::COCAL_ID_read_magnetic_potential = "False"
-COCAL_IDX::COCAL_ID_verbose = "False"
+COCAL_IDX::COCAL_IDX_PathToID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/mrns_wl"
+COCAL_IDX::COCAL_IDX_rnstype = "MRNS_WL"
+COCAL_IDX::COCAL_IDX_read_magnetic_potential = "False"
+COCAL_IDX::COCAL_IDX_verbose = "False"
 
 ADMBaseX::initial_data = "CocalRNS"
 ADMBaseX::initial_lapse = "Cocal"

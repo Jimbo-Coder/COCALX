@@ -3,7 +3,7 @@
  * Every rank needs the full COCAL fluid arrays and metric spline, but they are
  * identical on all ranks. With MPI the first rank of each node allocates them
  * in an MPI-3 shared-memory window and fills them; the other ranks of the node
- * map the same memory. Without MPI, or with COCAL_ID_share_node_memory = no,
+ * map the same memory. Without MPI, or with COCAL_IDX_share_node_memory = no,
  * each rank owns a private block and is its own leader. Called from
  * cocal_id_node_shared.f90.
  *
@@ -15,7 +15,7 @@
  * Known failure modes. An MPI that cannot create shared windows at all is
  * detected by a one-element probe window; that node then uses private copies
  * with a warning. A size limit hit later aborts with the message below (set
- * COCAL_ID_share_node_memory = no to run with private copies):
+ * COCAL_IDX_share_node_memory = no to run with private copies):
  * - Open MPI forced to osc/ucx (OMPI_MCA_osc=ucx, set by Anvil's openmpi
  *   modules): osc/ucx cannot create shared windows and returns MPI_ERR_INTERN
  *   at any size (ompi issue 11391; Anvil 4.0.6 job 21696592, also WSL 5.0.10).
@@ -75,7 +75,7 @@ static int shared_windows_work(void)
   return all;
 }
 
-/* COCAL_ID::COCAL_ID_share_node_memory, and whether the MPI supports it;
+/* COCAL_ID::COCAL_IDX_share_node_memory, and whether the MPI supports it;
  * decided once, before any rank asks whether it is the node leader. */
 static int sharing(void)
 {
@@ -83,7 +83,7 @@ static int sharing(void)
   if (enabled < 0) {
     int type;
     const CCTK_INT *value =
-        CCTK_ParameterGet("COCAL_ID_share_node_memory", CCTK_THORNSTRING, &type);
+        CCTK_ParameterGet("COCAL_IDX_share_node_memory", CCTK_THORNSTRING, &type);
     enabled = (value == NULL || *value != 0) && shared_windows_work();
   }
   return enabled;
@@ -128,7 +128,7 @@ void *COCAL_ID_node_alloc(long n)
       MPI_Error_string(err, msg, &len);
       CCTK_VWARN(CCTK_WARN_ABORT,
                  "COCAL_ID: cannot allocate %.2f GB of node-shared memory "
-                 "(%s). Set COCAL_ID::COCAL_ID_share_node_memory = no to use "
+                 "(%s). Set COCAL_ID::COCAL_IDX_share_node_memory = no to use "
                  "private per-rank memory instead.",
                  (double)n * sizeof(double) / 1073741824.0, msg);
     }

@@ -1,18 +1,16 @@
 # Hypatia CarpetX/AsterX development thornlist
-# ET_2026_05 base components plus the active development repositories.
+# Every repository on its development branch.
 # For existing local checkouts, set the relevant repository's !TYPE to ignore.
 
 !CRL_VERSION = 1.0
 !DEFINE ROOT = CactusX
 !DEFINE ARR = $ROOT/arrangements
 !DEFINE COMPONENTLIST_TARGET = $ROOT/thornlists/
-!DEFINE ET_RELEASE = ET_2026_05
 
 # This thorn list
 !TARGET   = $ROOT
 !TYPE     = git
 !URL      = https://bitbucket.org/einsteintoolkit/manifest.git
-!REPO_BRANCH = $ET_RELEASE
 !REPO_PATH= $1
 !NAME     = manifest
 !CHECKOUT = ./manifest
@@ -22,7 +20,6 @@
 !TARGET   = $ROOT
 !TYPE     = git
 !URL      = https://bitbucket.org/cactuscode/cactus.git
-!REPO_BRANCH = $ET_RELEASE
 !NAME     = flesh
 !CHECKOUT = .clang-format CONTRIBUTORS COPYRIGHT doc lib Makefile README.md src
 
@@ -30,7 +27,6 @@
 !TARGET   = $ROOT
 !TYPE     = git
 !URL      = https://bitbucket.org/simfactory/simfactory2.git
-!REPO_BRANCH = $ET_RELEASE
 !REPO_PATH=$1
 !NAME     = simfactory2
 !CHECKOUT = ./simfactory
@@ -40,7 +36,6 @@
 !TARGET   = $ROOT
 !TYPE     = git
 !URL      = https://bitbucket.org/einsteintoolkit/einsteinexamples.git
-!REPO_BRANCH = $ET_RELEASE
 !CHECKOUT = par
 
 
@@ -48,7 +43,6 @@
 !TARGET   = $ROOT/utils
 !TYPE     = git
 !URL      = https://bitbucket.org/cactuscode/utilities.git
-!REPO_BRANCH = $ET_RELEASE
 !REPO_PATH= $2
 !CHECKOUT = ./ParameterFiles ./Scripts ./Syntax
 
@@ -57,7 +51,6 @@
 !TARGET   = $ROOT/bin
 !TYPE     = git
 !URL      = https://github.com/gridaphobe/CRL.git
-!REPO_BRANCH = $ET_RELEASE
 !CHECKOUT = GetComponents
 
 
@@ -65,7 +58,6 @@
 !TARGET   = $ARR/CactusDoc
 !TYPE     = git
 !URL      = https://bitbucket.org/cactuscode/coredoc.git
-!REPO_BRANCH = $ET_RELEASE
 !NAME     = CoreDoc
 !REPO_PATH= $1
 !CHECKOUT = ./CoreDoc
@@ -75,7 +67,6 @@
 !TARGET   = $ARR
 !TYPE     = git
 !URL      = https://bitbucket.org/cactuscode/cactusbase.git
-!REPO_BRANCH = $ET_RELEASE
 !REPO_PATH= $2
 !CHECKOUT =
 CactusBase/Boundary
@@ -94,7 +85,6 @@ CactusBase/Time
 !TARGET   = $ARR
 !TYPE     = git
 !URL      = https://bitbucket.org/cactuscode/cactusutils.git
-!REPO_BRANCH = $ET_RELEASE
 !REPO_PATH= $2
 !CHECKOUT = CactusUtils/Accelerator CactusUtils/OpenCLRunTime
 #DISABLED CactusUtils/Accelerator
@@ -117,7 +107,6 @@ CactusUtils/WatchDog
 !TARGET   = $ARR
 !TYPE     = git
 !URL      = https://github.com/EinsteinToolkit/$1-$2
-!REPO_BRANCH = $ET_RELEASE
 !REPO_PATH = ../$1-$2
 !CHECKOUT = ExternalLibraries/OpenBLAS ExternalLibraries/OpenCL ExternalLibraries/pciutils
 ExternalLibraries/BLAS
@@ -153,7 +142,6 @@ ExternalLibraries/Boost
 !TARGET   = $ARR
 !TYPE     = git
 !URL      = https://bitbucket.org/cactuscode/numerical.git
-!REPO_BRANCH = $ET_RELEASE
 !REPO_PATH= $2
 !CHECKOUT =
 Numerical/AEILocalInterp
@@ -163,7 +151,6 @@ Numerical/AEILocalInterp
 !TARGET    = $ROOT/utils/Analysis
 !TYPE      = git
 !URL       = https://git.ncsa.illinois.edu/elihu/Gravitational_Waveform_Extractor.git
-!REPO_BRANCH = $ET_RELEASE
 !REPO_PATH = $1
 !CHECKOUT  = ./POWER
 

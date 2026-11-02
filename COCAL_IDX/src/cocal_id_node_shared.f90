@@ -1,7 +1,7 @@
 ! One copy per node of the COCAL data (cocal_id_node_shared.c). The node
 ! leader reads the COCAL arrays and fits the metric spline into memory that
 ! every rank of the node maps; the other ranks only take the scalar constants
-! from the leader. Without MPI, with COCAL_ID_share_node_memory = no, or when
+! from the leader. Without MPI, with COCAL_IDX_share_node_memory = no, or when
 ! the MPI cannot create shared windows, every rank is its own leader.
 module COCAL_ID_node_shared
   use iso_c_binding

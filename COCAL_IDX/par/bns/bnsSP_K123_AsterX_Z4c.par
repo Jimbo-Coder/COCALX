@@ -44,11 +44,11 @@ ActiveThorns = "
 
 # Initial data
 # Set this to the directory containing the SP_K123.6_000 ID files.
-COCAL_IDX::COCAL_ID_PathToID = "/path/to/SP_K123.6_000"
-COCAL_IDX::COCAL_ID_read_magnetic_potential = "False"
+COCAL_IDX::COCAL_IDX_PathToID = "/path/to/SP_K123.6_000"
+COCAL_IDX::COCAL_IDX_read_magnetic_potential = "False"
 
-COCAL_IDX::COCAL_ID_cen_x1 = -24.0336082094883
-COCAL_IDX::COCAL_ID_cen_x2 =  24.0336082094883
+COCAL_IDX::COCAL_IDX_cen_x1 = -24.0336082094883
+COCAL_IDX::COCAL_IDX_cen_x2 =  24.0336082094883
 
 
 # Runtime
@@ -115,12 +115,12 @@ BoxInBox::radius_1 = [-1, 768, 384, 192, 96, 48, 24]
 
 BoxInBox::shape_2 = "cube"
 BoxInBox::num_levels_2 = $nlevels
-BoxInBox::position_x_2 = COCAL_IDX::COCAL_ID_cen_x1
+BoxInBox::position_x_2 = COCAL_IDX::COCAL_IDX_cen_x1
 BoxInBox::radius_2 = [-1, 768, 384, 192, 96, 48, 24, 13.25]
 
 BoxInBox::shape_3 = "cube"
 BoxInBox::num_levels_3 = $nlevels
-BoxInBox::position_x_3 = COCAL_IDX::COCAL_ID_cen_x2
+BoxInBox::position_x_3 = COCAL_IDX::COCAL_IDX_cen_x2
 BoxInBox::radius_3 = [-1, 768, 384, 192, 96, 48, 24, 13.25]
 
 CarpetX::prolongation_type = "poly-cons3lfb"
@@ -166,7 +166,7 @@ AsterSeeds::Ab = 0.0
 AsterSeeds::press_cut = 0.04
 AsterSeeds::press_max =  1.6263769283673767e-04
 AsterSeeds::Avec_kappa = 2.0
-AsterSeeds::dipole_x = [COCAL_IDX::COCAL_ID_cen_x1, COCAL_IDX::COCAL_ID_cen_x2]
+AsterSeeds::dipole_x = [COCAL_IDX::COCAL_IDX_cen_x1, COCAL_IDX::COCAL_IDX_cen_x2]
 AsterSeeds::initial_beta = "no"
 AsterSeeds::set_coorbiting_vel = "no"
 AsterSeeds::seed_every = 0
@@ -276,7 +276,7 @@ VolumeIntegrals_GRMHDX::Integration_quantity_keyword[1] = "centerofmass"
 
 # Individual star CoMs drive AMR centers and the two stellar extraction spheres.
 VolumeIntegrals_GRMHDX::Integration_quantity_keyword[2] = "centerofmass"
-VolumeIntegrals_GRMHDX::volintegral_sphere__center_x_initial[2] = COCAL_IDX::COCAL_ID_cen_x1
+VolumeIntegrals_GRMHDX::volintegral_sphere__center_x_initial[2] = COCAL_IDX::COCAL_IDX_cen_x1
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_y_initial[2] = 0.
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_z_initial[2] = 0.
 VolumeIntegrals_GRMHDX::volintegral_inside_sphere__radius[2]   = 14.25
@@ -285,7 +285,7 @@ VolumeIntegrals_GRMHDX::amr_centre__tracks__volintegral_inside_sphere[2] = 1
 VolumeIntegrals_GRMHDX::sphericalsurface__tracks__volintegral_inside_sphere[2] = 0
 
 VolumeIntegrals_GRMHDX::Integration_quantity_keyword[3] = "centerofmass"
-VolumeIntegrals_GRMHDX::volintegral_sphere__center_x_initial[3] = COCAL_IDX::COCAL_ID_cen_x2
+VolumeIntegrals_GRMHDX::volintegral_sphere__center_x_initial[3] = COCAL_IDX::COCAL_IDX_cen_x2
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_y_initial[3] = 0.
 VolumeIntegrals_GRMHDX::volintegral_sphere__center_z_initial[3] = 0.
 VolumeIntegrals_GRMHDX::volintegral_inside_sphere__radius[3]   = 14.25
@@ -335,7 +335,7 @@ SphericalSurface::nphi = [ 76, 76, 76, 76, 76, 76 ]
 
 SphericalSurface::set_spherical = [ "yes", "yes", "yes", "yes", "yes", "yes" ]
 SphericalSurface::radius = [ 10.6478011054695, 10.6478011054695, 0.6*$xmax, 0.7*$xmax, 0.8*$xmax, 0.9*$xmax ]
-SphericalSurface::origin_x = [ COCAL_IDX::COCAL_ID_cen_x1, COCAL_IDX::COCAL_ID_cen_x2, 0.0, 0.0, 0.0, 0.0 ]
+SphericalSurface::origin_x = [ COCAL_IDX::COCAL_IDX_cen_x1, COCAL_IDX::COCAL_IDX_cen_x2, 0.0, 0.0, 0.0, 0.0 ]
 
 QuasiLocalMeasures::verbose = no
 QuasiLocalMeasures::interpolator = "CarpetX"

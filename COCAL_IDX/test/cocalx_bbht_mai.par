@@ -53,8 +53,8 @@ CarpetX::max_num_levels = 1
 CarpetX::regrid_every = 1280000
 CarpetX::dtfac = 0.5
 
-COCAL_IDX::COCAL_ID_PathToID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/bbht_mai"
-COCAL_IDX::COCAL_ID_verbose = "False"
+COCAL_IDX::COCAL_IDX_PathToID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/bbht_mai"
+COCAL_IDX::COCAL_IDX_verbose = "False"
 
 ADMBaseX::initial_data = "CocalBBHT"
 ADMBaseX::initial_lapse = "Cocal"

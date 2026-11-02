@@ -90,12 +90,12 @@ CarpetX::out_performance_every = $out_every
 CarpetX::refine_grid_layout = no
 
 # Initial data
-COCAL_IDX::COCAL_ID_PathToID = "/anvil/projects/x-mca99s008/coc2cac_IDs/rns/rnsH3_K123.6_CF_M1.4_par_sol_24"
-COCAL_IDX::COCAL_ID_read_magnetic_potential = "False"
-COCAL_IDX::COCAL_ID_rnstype         = "RNS_CF"
+COCAL_IDX::COCAL_IDX_PathToID = "/anvil/projects/x-mca99s008/coc2cac_IDs/rns/rnsH3_K123.6_CF_M1.4_par_sol_24"
+COCAL_IDX::COCAL_IDX_read_magnetic_potential = "False"
+COCAL_IDX::COCAL_IDX_rnstype         = "RNS_CF"
 
 
-COCAL_IDX::COCAL_ID_verbose = "False"
+COCAL_IDX::COCAL_IDX_verbose = "False"
 
 CarpetX::use_subcycling = yes
 CarpetX::restrict_during_sync = no

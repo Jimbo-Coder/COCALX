@@ -145,10 +145,10 @@ subroutine COCAL_ID_read_bns(dir)
   case default
     call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_ID BNS: unsupported fluid data type.")
   end select
-  bns_xunit = COCAL_ID_bns_xunit == 1
-  bns_ecc_velx = COCAL_ID_ecc_cor_velx
-  bns_ecc_star(1, :) = COCAL_ID_ecc_cor_velx_star
-  bns_ecc_star(2, :) = COCAL_ID_ecc_cor_velz_star
+  bns_xunit = COCAL_IDX_bns_xunit == 1
+  bns_ecc_velx = COCAL_IDX_ecc_cor_velx
+  bns_ecc_star(1, :) = COCAL_IDX_ecc_cor_velx_star
+  bns_ecc_star(2, :) = COCAL_IDX_ecc_cor_velz_star
 
   do impt = 1, 3
     write(patch, '(i1)') impt
@@ -192,7 +192,7 @@ subroutine COCAL_ID_read_bns(dir)
       call COCAL_ID_copy_def_peos_parameter_from_mpt(impt)
     end if
     call COCAL_ID_coordinate_patch_kit_grav_grid_coc2cac_mpt(igrid, impt, cocal_dir, fmt, &
-                                                             COCAL_ID_bns_compact == 1 .and. impt == 3)
+                                                             COCAL_IDX_bns_compact == 1 .and. impt == 3)
     call calc_parameter_binary_excision
     call COCAL_ID_copy_grid_parameter_to_mpt(impt)
     call COCAL_ID_copy_grid_parameter_binary_excision_to_mpt(impt)
@@ -234,7 +234,7 @@ subroutine COCAL_ID_read_bns(dir)
   call COCAL_ID_domain_prepare(cocal_metric, ok, star_extent)
   if (ok) call COCAL_ID_domain_prepare(cocal_matter, ok, 0.0d0)
   if (.not. ok) call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_ID BNS: the exported grids must have increasing radii and uniform angles.")
-  if (COCAL_ID_verbose == 1) then
+  if (COCAL_IDX_verbose == 1) then
     do impt = 1, 2
       associate(p => bns_stars(impt))
         write(msg, '(a,i1,a,5es20.12)') 'COCAL_ID BNS star ', impt, ' ome, ber, radi, xcm, zcm: ', &
@@ -260,7 +260,7 @@ contains
     write(patch, '(i1)') impt
     associate(p => cocal_metric%patch(impt))
       ! A compact export's last radial point is at infinity: read it, but fit 0:nrg-1.
-      if (impt == 3 .and. COCAL_ID_bns_compact == 1) then
+      if (impt == 3 .and. COCAL_IDX_bns_compact == 1) then
         call COCAL_ID_patch_set_grids(p, rg(0:nrg - 1), thg(0:ntg), phig(0:npg))
       else
         call COCAL_ID_patch_set_grids(p, rg(0:nrg), thg(0:ntg), phig(0:npg))

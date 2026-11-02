@@ -122,8 +122,8 @@ subroutine COCAL_ID_read_data(CCTK_ARGUMENTS)
   logical :: ok, three_patch
 
   if (cocal_kind /= 0) return
-  call CCTK_FortranString(dir_len, COCAL_ID_PathToID, dir)
-  cocal_tabulated_eos = COCAL_ID_read_tabulated_eos == 1
+  call CCTK_FortranString(dir_len, COCAL_IDX_PathToID, dir)
+  cocal_tabulated_eos = COCAL_IDX_read_tabulated_eos == 1
   if (CCTK_EQUALS(initial_data, "CocalRNS")) then
     cocal_kind = COCAL_RNS
     call COCAL_ID_read_rns(trim(dir))
@@ -135,7 +135,7 @@ subroutine COCAL_ID_read_data(CCTK_ARGUMENTS)
     call COCAL_ID_read_bht(trim(dir))
   else
     cocal_kind = merge(COCAL_BBHT, COCAL_BBH, CCTK_EQUALS(initial_data, "CocalBBHT"))
-    call COCAL_ID_read_bbh(trim(dir), ok, CCTK_EQUALS(COCAL_ID_bbh_fill_method, "smooth"), cocal_kind == COCAL_BBHT)
+    call COCAL_ID_read_bbh(trim(dir), ok, CCTK_EQUALS(COCAL_IDX_bbh_fill_method, "smooth"), cocal_kind == COCAL_BBHT)
     if (.not. ok) call CCTK_WARN(CCTK_WARN_ABORT, trim(bbh_error))
   end if
 
@@ -143,19 +143,18 @@ subroutine COCAL_ID_read_data(CCTK_ARGUMENTS)
   three_patch = cocal_metric%npatches == 3
   if (three_patch .and. (cocal_metric%slab_halfwidth == 0 .or. cocal_metric%shell_hi == cocal_metric%shell_lo)) &
     call CCTK_WARN(CCTK_WARN_ALERT, "COCAL_ID: no usable patch overlap; using a hard patch switch there.")
-  if (three_patch .and. COCAL_ID_verbose == 1) then
+  if (three_patch .and. COCAL_IDX_verbose == 1) then
     write(msg, '(a,es12.4,a,2es12.4,a)') 'COCAL_ID patch blend: midplane |x-mid| <', cocal_metric%slab_halfwidth, &
       ', outer shell', cocal_metric%shell_lo, cocal_metric%shell_hi, ' (COCAL units)'
     call CCTK_INFO(trim(msg))
   end if
-  if (COCAL_ID_verbose == 1) then
+  if (COCAL_IDX_verbose == 1) then
     write(msg, '(a,es20.12)') 'COCAL_ID: read the COCAL data; radi = ', cocal_radi
     call CCTK_INFO(trim(msg))
   end if
 end subroutine COCAL_ID_read_data
 
-! The values on the grid: the driver's own file (Carpet: the grid loop;
-! CarpetX: a point evaluator for its C++ loops).
+! The point evaluator for the C++ grid loops.
 #include "cocal_id_grid.F90"
 
 ! Collective over the node.
