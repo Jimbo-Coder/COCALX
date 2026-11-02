@@ -39,19 +39,24 @@ void check(const point_values &v) {
 }
 } // namespace
 
-// alpha and beta^i are replaced by ADMBaseX's initial_lapse and
-// initial_shift unless they are "Cocal" (schedule.ccl).
+// alpha and beta^i only when initial_lapse and initial_shift are "Cocal".
 extern "C" void COCAL_ID_set_metric(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTSX_COCAL_ID_set_metric;
+  DECLARE_CCTK_PARAMETERS;
 
+  const bool set_lapse = CCTK_EQUALS(initial_lapse, "Cocal");
+  const bool set_shift = CCTK_EQUALS(initial_shift, "Cocal");
   point_values v;
   grid.loop_all<0, 0, 0>(grid.nghostzones, [&](const PointDesc &p) {
     v.eval(p);
     const auto &s = v.adm;
-    alp(p.I) = s[0];
-    betax(p.I) = s[1];
-    betay(p.I) = s[2];
-    betaz(p.I) = s[3];
+    if (set_lapse)
+      alp(p.I) = s[0];
+    if (set_shift) {
+      betax(p.I) = s[1];
+      betay(p.I) = s[2];
+      betaz(p.I) = s[3];
+    }
     gxx(p.I) = s[4];
     gxy(p.I) = s[5];
     gxz(p.I) = s[6];
@@ -68,15 +73,15 @@ extern "C" void COCAL_ID_set_metric(CCTK_ARGUMENTS) {
   check(v);
 }
 
-// MRNS data give A_i (COCAL_ID_read_magnetic_potential) or B^i; the other,
+// MRNS data give A_i (COCAL_IDX_read_magnetic_potential) or B^i; the other,
 // and both for other IDs, are zero.
 extern "C" void COCAL_ID_set_hydro(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTSX_COCAL_ID_set_hydro;
   DECLARE_CCTK_PARAMETERS;
 
   const bool potential = CCTK_EQUALS(initial_data, "CocalRNS") &&
-                         CCTK_EQUALS(COCAL_ID_rnstype, "MRNS_WL") &&
-                         COCAL_ID_read_magnetic_potential;
+                         CCTK_EQUALS(COCAL_IDX_rnstype, "MRNS_WL") &&
+                         COCAL_IDX_read_magnetic_potential;
 
   point_values v;
   grid.loop_all<1, 1, 1>(grid.nghostzones, [&](const PointDesc &p) {

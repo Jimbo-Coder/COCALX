@@ -1,15 +1,7 @@
 # COCAL_IDX
-The COCAL initial-data reader for CarpetX: the reader of the Carpet thorn
-COCAL_ID ([Jimbo-Coder/COCAL](https://github.com/Jimbo-Coder/COCAL)), with the
-same parameters and the same values at the same points. Branches match COCAL's:
-main has RNS, MRNS and BNS, dev adds the black-hole IDs, and AsterX-Msup is
-main with AsterX's vector potential set as well.
-
-Only the CarpetX driver is this repository's own: `src/cocal_id_grid.F90`,
-`src/cocal_id_set_data.cxx`, the ccl files but `param.ccl`, the fixtures and the
-examples. The rest is COCAL_ID's; update it with
-`tools/sync_cocal.py <COCAL checkout>`, which CI checks against COCAL's branch
-of the same name.
+The COCAL initial-data reader for CarpetX, ported from the Carpet thorn
+COCAL_ID ([Jimbo-Coder/COCAL](https://github.com/Jimbo-Coder/COCAL)) with the
+same parameters. main has RNS, MRNS and BNS; dev adds the black-hole IDs.
 
 ## CarpetX specifics
 
@@ -18,11 +10,11 @@ lapse and shift at vertices, the HydroBaseX fluid and `Bvec` at cell centres,
 and `Avecx/y/z` on the cell edges. There is no staggering offset and no
 separate `initial_Avec`/`initial_Bvec` choice: `HydroBaseX::initial_hydro =
 "Cocal"` sets the fluid and, for MRNS_WL, `Avec`
-(`COCAL_ID_read_magnetic_potential = yes`) or `Bvec` (`no`); the other is zero.
+(`COCAL_IDX_read_magnetic_potential = yes`) or `Bvec` (`no`); the other is zero.
 
 The data are read at `INITIAL` before `ODESolvers_Initial`, and the metric is
-set then; ADMBaseX's `initial_lapse` and `initial_shift` run after it and
-replace COCAL's lapse and shift unless they are `"Cocal"`. The fluid is set in
+set then, with the lapse and shift where `initial_lapse` and `initial_shift`
+are `"Cocal"`. The fluid is set in
 `HydroBaseX_InitialData`. CarpetX enters the initial bin again for every level
 it adds; the data are read once and freed at `CPINITIAL`.
 
@@ -32,41 +24,40 @@ AsterX-Msup also sets AsterX's vector potential, so COCAL_IDX inherits AsterX
 here and needs it active: `Avec_x/y/z` are HydroBaseX's `Avecx/y/z` (the same
 edge centrings) and `Psi` = sqrt(det g) Aphi at the vertices, from
 `src/cocal_id_set_asterx.cxx`; all zero unless MRNS_WL data give the potential.
-The reader is main's, which tools/sync_cocal.py checks against COCAL main.
 `test/cocalx_mrns_wl_asterx` covers the handoff.
 
 ## Parameters
 
-The parameters are COCAL_ID's (`param.ccl`), set as `COCAL_IDX::<name>`.
+Parameters (`param.ccl`) are set as `COCAL_IDX::<name>`.
 Parameter files for the earlier CarpetX reader rename:
 
 | Earlier CarpetX reader | Now |
 | --- | --- |
-| `coc2cac_dir_path_ID` | `COCAL_ID_PathToID` |
-| `coc2cac_rnstype` | `COCAL_ID_rnstype` |
-| `coc2cac_readpot` | `COCAL_ID_read_magnetic_potential` |
-| `coc2cac_read_tabulated_eos` | `COCAL_ID_read_tabulated_eos` |
-| `coc2cac_cen_{x,y,z}{1,2}` | `COCAL_ID_cen_{x,y,z}{1,2}` |
-| `verbose` | `COCAL_ID_verbose` |
+| `coc2cac_dir_path_ID` | `COCAL_IDX_PathToID` |
+| `coc2cac_rnstype` | `COCAL_IDX_rnstype` |
+| `coc2cac_readpot` | `COCAL_IDX_read_magnetic_potential` |
+| `coc2cac_read_tabulated_eos` | `COCAL_IDX_read_tabulated_eos` |
+| `coc2cac_cen_{x,y,z}{1,2}` | `COCAL_IDX_cen_{x,y,z}{1,2}` |
+| `verbose` | `COCAL_IDX_verbose` |
 | `coc2cac_readformat` | removed: both formats are read |
 
 ```shell
-sed -i -e '/coc2cac_readformat/d' -e 's/coc2cac_dir_path_ID/COCAL_ID_PathToID/' \
-  -e 's/coc2cac_readpot/COCAL_ID_read_magnetic_potential/' -e 's/COCAL_IDX::coc2cac_/COCAL_IDX::COCAL_ID_/g' \
-  -e 's/COCAL_IDX::verbose/COCAL_IDX::COCAL_ID_verbose/' run.par
+sed -i -e '/coc2cac_readformat/d' -e 's/coc2cac_dir_path_ID/COCAL_IDX_PathToID/' \
+  -e 's/coc2cac_readpot/COCAL_IDX_read_magnetic_potential/' -e 's/COCAL_IDX::coc2cac_/COCAL_IDX::COCAL_IDX_/g' \
+  -e 's/COCAL_IDX::verbose/COCAL_IDX::COCAL_IDX_verbose/' run.par
 ```
 
-New: `COCAL_ID_ecc_cor_velx` with `COCAL_ID_bns_xunit` (BNS velocity
-correction), and `COCAL_ID_share_node_memory`.
+New: `COCAL_IDX_ecc_cor_velx` with `COCAL_IDX_bns_xunit` (BNS velocity
+correction), and `COCAL_IDX_share_node_memory`.
 
 ## Setup
 
 1. Check out the ETK, CarpetX and COCAL_IDX with the thornlist:
    `./GetComponents --root {dir} thornlists/asterx_subcycle.th`
 2. Configure simfactory (machine, option list, run and submit scripts) and
-   compile: `./simfactory/bin/sim build {config} --thornlist thornlists/asterx_subcycle.th`
-3. Start from an example in `par/` and set `COCAL_IDX::COCAL_ID_PathToID` and,
-   for RNS, `COCAL_IDX::COCAL_ID_rnstype` to match the ID. Single-layer
+   compile with GNU make 4 or later (`gmake` on macOS): `./simfactory/bin/sim build {config} --thornlist thornlists/asterx_subcycle.th`
+3. Start from an example in `par/` and set `COCAL_IDX::COCAL_IDX_PathToID` and,
+   for RNS, `COCAL_IDX::COCAL_IDX_rnstype` to match the ID. Single-layer
    RNS IDs (K123.6, CF or WL) are at
    https://uofi.box.com/s/gbamn61wxuhh5iw6dxte1m1bzrgtl0al.
 
@@ -81,20 +72,18 @@ Every COCAL export (RNS, MRNS, BNS) is held the same way:
 - a **matter domain**: the fluid on its own grid, surface fitted (r/rs) as on
   COCAL's fluid grids.
 
-At each Cactus point the metric is evaluated, the ID's matter is composed
-with that same metric (the Eulerian velocity uses alpha and beta^i at the
-point), and each grid function takes the values at its own points. The readers differ only
-where the export formats differ.
+At each Cactus point the metric is evaluated, the ID's matter is composed with
+that same metric (the Eulerian velocity uses alpha and beta^i at the point),
+and each grid function takes the values at its own points. The readers differ
+only where the export formats differ.
 
 The shift is ADMBaseX's contravariant beta^i. Waveless exports (RNS_WL,
 MRNS_WL, BHT) store the covariant shift of the conformal metric, which the
-reader raises with gt^ij; conformally flat exports need no raising. Readers
-before November 2026 wrote the covariant shift unraised for RNS_WL and
-MRNS_WL (BHT was raised), an error of about 1e-3 of the shift.
+reader raises with gt^ij; conformally flat exports need no raising.
 
 | File | Contents |
 | --- | --- |
-| `src/COCAL_ID_master.F90` | Cactus entry points: read, free; the same in COCAL |
+| `src/COCAL_ID_master.F90` | Cactus entry points: read, free |
 | `src/cocal_id_grid.F90` | the values at one point, for the CarpetX loops |
 | `src/cocal_id_set_data.cxx` | the CarpetX loops, one per centring |
 | `src/cocal_id_state.f90` | metric layout, the state at a point, EOS |
@@ -138,35 +127,31 @@ As in COCAL, values at or below the vacuum threshold are vacuum.
 
 ## Node-shared storage
 
-Node-shared arrays use the `COCAL_ID_share_node_memory` control. It defaults
+Node-shared arrays use the `COCAL_IDX_share_node_memory` control. It defaults
 to `yes`: each node's leader reads the export straight into the fields it
 fits, and the spline coefficients are shared by the node's ranks. Set it to
-`no` to use private per-rank copies. If the initial MPI capability probe
-cannot create shared windows, the reader falls back to private copies with a
-warning. A later large shared allocation failure aborts with guidance to
-disable sharing; it does not retry privately. Open MPI on Anvil needs
+`no` for private per-rank copies. If shared windows cannot be created at
+startup the reader warns and uses private copies; a later shared allocation
+failure aborts. Open MPI on Anvil needs
 `OMPI_MCA_osc=sm,ucx`.
 
 ## BNS exports
 
 Patch grids are regenerated from each patch's `rnspar_mpt*.dat`. The
-coordinate map requires equal `radi` length normalization and a shared
-midpoint; these are validated constraints, distinct from the individual
-stellar sizes. Matter belongs to one star, chosen by the midplane.
+coordinate map requires equal `radi` and a shared midpoint, which are checked.
+Matter belongs to one star, chosen by the midplane.
 
 ### BNS velocity correction
 
 For exports generated with the `xunit` prescription, set
-`COCAL_IDX::COCAL_ID_bns_xunit = yes`. This multiplies `COCAL_ID_ecc_cor_velx`
+`COCAL_IDX::COCAL_IDX_bns_xunit = yes`. This multiplies `COCAL_IDX_ecc_cor_velx`
 by the signed half-separation in COCAL coordinates, adding a constant x term
 to each star's corotating shift; negative values give inward corrections.
-The default is the existing radial prescription. Use the prescription and coefficient
-from the ID generation settings; neither is inferred from the directory name.
+The default is the radial prescription; use the prescription and coefficient
+the ID was generated with.
 
 ### BNS orbital offsets
 
 The fluid constants record in `bnsflu_3D_mpt{1,2}.las` contains
-`ome, ber, radi, xcm, zcm`. Missing `xcm` or `zcm` fields are read as zero.
-Both offsets are used automatically. Nonzero `zcm` tilts the orbital rotation
-used to reconstruct fluid velocities; zero `zcm` retains the existing `xcm`
-calculation. The radial and `xunit` eccentricity corrections are unchanged.
+`ome, ber, radi, xcm, zcm`; missing fields are read as zero. A nonzero `zcm`
+tilts the orbital rotation used for the fluid velocity.

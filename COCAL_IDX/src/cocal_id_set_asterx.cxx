@@ -16,14 +16,14 @@ using namespace Loop;
 
 // AsterX's vector potential: A_i as set in HydroBaseX (the same edge
 // centrings), and Psi = sqrt(det g) Aphi at the vertices. Both are zero
-// unless MRNS_WL data give the potential (COCAL_ID_read_magnetic_potential).
+// unless MRNS_WL data give the potential (COCAL_IDX_read_magnetic_potential).
 extern "C" void COCAL_ID_set_asterx(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTSX_COCAL_ID_set_asterx;
   DECLARE_CCTK_PARAMETERS;
 
   const bool potential = CCTK_EQUALS(initial_data, "CocalRNS") &&
-                         CCTK_EQUALS(COCAL_ID_rnstype, "MRNS_WL") &&
-                         COCAL_ID_read_magnetic_potential;
+                         CCTK_EQUALS(COCAL_IDX_rnstype, "MRNS_WL") &&
+                         COCAL_IDX_read_magnetic_potential;
 
   grid.loop_all<1, 0, 0>(grid.nghostzones,
                          [&](const PointDesc &p) { Avec_x(p.I) = Avecx(p.I); });

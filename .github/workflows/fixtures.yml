@@ -1,6 +1,5 @@
-# Check that the reader is COCAL's, then build a minimal Einstein Toolkit with
-# CarpetX and run the COCAL_IDX fixture tests, only when the reader, its
-# tests, the sync tool or this CI change.
+# Build a minimal Einstein Toolkit with CarpetX and run the COCAL_IDX fixture
+# tests, only when the reader, its tests or this CI change.
 name: COCAL_IDX fixtures
 
 on:
@@ -9,7 +8,6 @@ on:
       - "COCAL_IDX/src/**"
       - "COCAL_IDX/*.ccl"
       - "COCAL_IDX/test/**"
-      - "tools/*.py"
       - ".github/ci/**"
       - ".github/workflows/fixtures.yml"
   pull_request:
@@ -17,7 +15,6 @@ on:
       - "COCAL_IDX/src/**"
       - "COCAL_IDX/*.ccl"
       - "COCAL_IDX/test/**"
-      - "tools/*.py"
       - ".github/ci/**"
       - ".github/workflows/fixtures.yml"
   workflow_dispatch:
@@ -30,20 +27,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # The shared reader files must match COCAL's branch of the same name (dev,
-  # or main for every other branch).
-  sync:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - name: Compare with COCAL
-        run: |
-          branch=main
-          [ "${{ github.head_ref || github.ref_name }}" = dev ] && branch=dev
-          git clone --quiet --depth 1 --branch "$branch" https://github.com/Jimbo-Coder/COCAL.git "$RUNNER_TEMP/cocal"
-          python3 tools/sync_cocal.py "$RUNNER_TEMP/cocal" --check
-
   fixtures:
     runs-on: ubuntu-24.04
     timeout-minutes: 120

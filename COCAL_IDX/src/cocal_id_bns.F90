@@ -140,8 +140,8 @@ subroutine COCAL_ID_read_bns(dir)
   case default
     call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_ID BNS: unsupported fluid data type.")
   end select
-  bns_xunit = COCAL_ID_bns_xunit == 1
-  bns_ecc_velx = COCAL_ID_ecc_cor_velx
+  bns_xunit = COCAL_IDX_bns_xunit == 1
+  bns_ecc_velx = COCAL_IDX_ecc_cor_velx
   igrid = 4     ! Legacy grids (rg(nrf) = 1).
 
   ! COCAL's parameters for each patch.
@@ -219,7 +219,7 @@ subroutine COCAL_ID_read_bns(dir)
   call COCAL_ID_domain_prepare(cocal_metric, ok, star_extent)
   if (ok) call COCAL_ID_domain_prepare(cocal_matter, ok, 0.0d0)
   if (.not. ok) call CCTK_WARN(CCTK_WARN_ABORT, "COCAL_ID BNS: the exported grids must have increasing radii and uniform angles.")
-  if (COCAL_ID_verbose == 1) then
+  if (COCAL_IDX_verbose == 1) then
     do impt = 1, 2
       associate(p => bns_stars(impt))
         write(msg, '(a,i1,a,5es20.12)') 'COCAL_ID BNS star ', impt, ' ome, ber, radi, xcm, zcm: ', &

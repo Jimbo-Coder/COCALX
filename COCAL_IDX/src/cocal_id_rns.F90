@@ -124,8 +124,8 @@ subroutine COCAL_ID_read_rns(dir)
 
   leader = COCAL_ID_node_leader()
   cocal_dir = dir
-  wl = .not. CCTK_EQUALS(COCAL_ID_rnstype, "RNS_CF")
-  mrns = CCTK_EQUALS(COCAL_ID_rnstype, "MRNS_WL")
+  wl = .not. CCTK_EQUALS(COCAL_IDX_rnstype, "RNS_CF")
+  mrns = CCTK_EQUALS(COCAL_IDX_rnstype, "MRNS_WL")
   call read_parameter_cactus(cocal_dir)
   if (cocal_tabulated_eos) then
     call COCAL_ID_teos_initialize_cactus(cocal_dir)
@@ -143,7 +143,7 @@ subroutine COCAL_ID_read_rns(dir)
 
   nextra = 0
   if (mrns) then
-    rns_em = merge(RNS_EM_POTENTIAL, RNS_EM_FARADAY, COCAL_ID_read_magnetic_potential == 1)
+    rns_em = merge(RNS_EM_POTENTIAL, RNS_EM_FARADAY, COCAL_IDX_read_magnetic_potential == 1)
     rns_em0 = NMETRIC_WL + 1
     nextra = merge(4, 3, rns_em == RNS_EM_POTENTIAL)
   end if
