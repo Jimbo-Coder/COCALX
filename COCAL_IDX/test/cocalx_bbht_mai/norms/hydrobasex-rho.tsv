@@ -1,0 +1,2 @@
+# 1:iteration	2:time	3:hydrobasex::rho.min	4:hydrobasex::rho.max	5:hydrobasex::rho.sum	6:hydrobasex::rho.avg	7:hydrobasex::rho.stddev	8:hydrobasex::rho.volume	9:hydrobasex::rho.L1norm	10:hydrobasex::rho.L2norm	11:hydrobasex::rho.maxabs
+0	0.0000000000000000e+00	4.7827664239943089e-07	9.9773131504963399e-07	1.0109984405558129e-05	8.4249870046317744e-07	1.2913117459330546e-07	1.2000000000000000e+01	8.4249870046317744e-07	8.5233732790133598e-07	9.9773131504963399e-07

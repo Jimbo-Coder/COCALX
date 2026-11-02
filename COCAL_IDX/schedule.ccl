@@ -1,6 +1,8 @@
 # Schedule definitions for thorn COCAL_IDX
 
-if (CCTK_Equals(initial_data, "CocalRNS") || CCTK_Equals(initial_data, "CocalBNS"))
+if (CCTK_Equals(initial_data, "CocalRNS") || CCTK_Equals(initial_data, "CocalBNS") ||
+    CCTK_Equals(initial_data, "CocalBHT") || CCTK_Equals(initial_data, "CocalBBH") ||
+    CCTK_Equals(initial_data, "CocalBBHT"))
 {
    # Before the ID groups, which are inside ODESolvers_Initial when that
    # thorn is active; ADMBaseX's initial_lapse and initial_shift then replace

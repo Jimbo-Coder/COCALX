@@ -74,6 +74,9 @@ extern "C" void COCAL_ID_set_hydro(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTSX_COCAL_ID_set_hydro;
   DECLARE_CCTK_PARAMETERS;
 
+  if (CCTK_EQUALS(initial_data, "CocalBBH"))
+    CCTK_ERROR("COCAL_ID: BBH data contain no matter; set "
+               "HydroBaseX::initial_hydro = \"vacuum\".");
   const bool potential = CCTK_EQUALS(initial_data, "CocalRNS") &&
                          CCTK_EQUALS(COCAL_ID_rnstype, "MRNS_WL") &&
                          COCAL_ID_read_magnetic_potential;

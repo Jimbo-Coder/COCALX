@@ -1,0 +1,82 @@
+# COCAL_IDX reduced-fixture reader regression test.
+
+Cactus::cctk_run_title = "COCAL_IDX BHT fixture"
+Cactus::cctk_full_warnings = "yes"
+Cactus::highlight_warning_messages = "no"
+Cactus::terminate = "iteration"
+Cactus::cctk_itlast = 0
+Cactus::presync_mode = "mixed-error"
+Cactus::cctk_show_schedule = "no"
+
+ActiveThorns = "
+  ADMBaseX
+  CarpetX
+  CoordinatesX
+  HydroBaseX
+  IOUtil
+  COCAL_IDX
+"
+
+CarpetX::verbose = no
+CarpetX::poison_undefined_values = yes
+#CarpetX::poison_undefined_arrays = no
+
+CarpetX::xmin = -0.9
+CarpetX::xmax = 0.9
+CarpetX::ymin = -0.9
+CarpetX::ymax = 0.9
+CarpetX::zmin = -0.9
+CarpetX::zmax = 0.9
+
+CarpetX::ncells_x = 30
+CarpetX::ncells_y = 30
+CarpetX::ncells_z = 30
+
+CarpetX::blocking_factor_x = 1
+CarpetX::blocking_factor_y = 1
+CarpetX::blocking_factor_z = 1
+CarpetX::max_grid_size_x = 30
+CarpetX::max_grid_size_y = 30
+CarpetX::max_grid_size_z = 30
+CarpetX::max_tile_size_x = 1024000
+CarpetX::max_tile_size_y = 1024000
+CarpetX::max_tile_size_z = 1024000
+
+CarpetX::boundary_x = "neumann"
+CarpetX::boundary_y = "neumann"
+CarpetX::boundary_z = "neumann"
+CarpetX::boundary_upper_x = "neumann"
+CarpetX::boundary_upper_y = "neumann"
+CarpetX::boundary_upper_z = "neumann"
+CarpetX::ghost_size = 3
+CarpetX::max_num_levels = 1
+CarpetX::regrid_every = 1280000
+CarpetX::dtfac = 0.5
+
+COCAL_IDX::COCAL_ID_PathToID = "../../../arrangements/COCALX/COCAL_IDX/test/test_InitialData/bht"
+COCAL_IDX::COCAL_ID_verbose = "False"
+
+ADMBaseX::initial_data = "CocalBHT"
+ADMBaseX::initial_lapse = "Cocal"
+ADMBaseX::initial_shift = "Cocal"
+ADMBaseX::initial_dtlapse = "zero"
+ADMBaseX::initial_dtshift = "zero"
+HydroBaseX::initial_hydro = "Cocal"
+
+IO::out_dir = $parfile
+IO::out_every = 1
+IO::out_fileinfo = "axis labels"
+IO::parfile_write = "no"
+
+CarpetX::out_metadata = no
+CarpetX::out_norm_vars = "
+  ADMBaseX::lapse
+  ADMBaseX::shift
+  ADMBaseX::metric
+  ADMBaseX::curv
+  HydroBaseX::rho
+  HydroBaseX::press
+  HydroBaseX::vel
+"
+CarpetX::out_norm_omit_unstable = yes
+CarpetX::out_norm_omit_sumloc_for_backward_compatibility = yes
